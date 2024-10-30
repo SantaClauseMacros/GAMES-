@@ -1,10 +1,37 @@
 /* Elemental Fusion Styling */
-.game-card select {
+.game-card {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  border: 2px solid #4b59f7;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f0f0f0;
+}
+
+.hidden {
+  display: none;
+}
+
+.element-card {
   margin: 0.5rem;
   padding: 0.5rem;
   font-size: 1rem;
-  border-radius: 5px;
   border: 1px solid #4b59f7;
+  border-radius: 5px;
+  background-color: #ffffff;
+  cursor: move;
+}
+
+.element-card:hover {
+  background-color: #e0e0e0;
+}
+
+#element-container {
+  margin-top: 1.5rem;
+  border: 2px dashed #4b59f7;
+  padding: 10px;
+  min-height: 50px;
 }
 
 #combine-button {
