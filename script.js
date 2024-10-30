@@ -1,5 +1,4 @@
-// Extensive Elemental Fusion Game Logic with 1,000 combinations
-const combinations = {
+    const combinations = {
     // Basic element combinations
     "fire+water": "Steam",
     "fire+earth": "Lava",
@@ -194,59 +193,95 @@ const combinations = {
     // Add more if needed to reach exact total
 };
 
-let discoveredElements = new Set(["Fire", "Water", "Earth", "Air"]); // Starting elements
+let discoveredElements = new Set(["Fire", "Water", "Earth", "Air"]);
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateDiscoveryIndex();
+    discoveredElements.forEach(addElementCard);
+});
 
 // Function to update Discovery Index
 function updateDiscoveryIndex() {
     const discoveredList = document.getElementById('discovered-elements');
     discoveredList.innerHTML = '';
 
-    discoveredElements.forEach((element) => {
+    discoveredElements.forEach(element => {
         const listItem = document.createElement('li');
         listItem.textContent = element;
         discoveredList.appendChild(listItem);
     });
 }
 
-// Function to handle combinations
-function combineElements(draggedElement, droppedElement) {
-    const element1 = draggedElement.getAttribute("data-element");
-    const element2 = droppedElement.getAttribute("data-element");
-    const resultDisplay = document.getElementById('result');
-
-    const key1 = `${element1}+${element2}`;
-    const key2 = `${element2}+${element1}`;
-
-    let result;
-    if (combinations[key1]) {
-        result = combinations[key1];
-    } else if (combinations[key2]) {
-        result = combinations[key2];
-    } else {
-        result = "Unknown";
-    }
-
-    resultDisplay.textContent = result;
-
-    if (result !== "Unknown" && !discoveredElements.has(result)) {
-        discoveredElements.add(result);
-        updateDiscoveryIndex();
-        addElementCard(result);
-    }
-}
-
-// Function to add element card dynamically
+// Function to add element card dynamically and enable dragging
 function addElementCard(element) {
     const elementContainer = document.getElementById('element-container');
     const newCard = document.createElement('div');
     newCard.className = 'element-card';
     newCard.textContent = element;
     newCard.setAttribute("data-element", element);
+    elementContainer.appendChild(newCard);
+
+    newCard.style.left = `${Math.random() * 80}vw`; // Random position
+    newCard.style.top = `${Math.random() * 60}vh`; // Random position
+
     newCard.draggable = true;
     newCard.ondragstart = handleDragStart;
-
-    elementContainer.appendChild(newCard);
+    newCard.ondragend = handleDragEnd;
 }
 
-// Initialize Discovery Index on load
-document.addEventListener('DOMContentLoaded', updateDiscoveryIndex);
+let draggedElement = null;
+
+// Drag start event handler
+function handleDragStart(event) {
+    draggedElement = event.target;
+}
+
+// Drag end event handler with collision detection for mixing elements
+function handleDragEnd(event) {
+    const elements = document.querySelectorAll('.element-card');
+
+    elements.forEach(targetElement => {
+        if (targetElement !== draggedElement && isTouching(draggedElement, targetElement)) {
+            const element1 = draggedElement.getAttribute("data-element");
+            const element2 = targetElement.getAttribute("data-element");
+
+            const key1 = `${element1}+${element2}`;
+            const key2 = `${element2}+${element1}`;
+            let result;
+
+            if (combinations[key1]) {
+                result = combinations[key1];
+            } else if (combinations[key2]) {
+                result = combinations[key2];
+            } else {
+                result = "Unknown";
+            }
+
+            displayResult(result);
+
+            if (result !== "Unknown" && !discoveredElements.has(result)) {
+                discoveredElements.add(result);
+                updateDiscoveryIndex();
+                addElementCard(result);
+            }
+        }
+    });
+}
+
+// Collision detection function
+function isTouching(element1, element2) {
+    const rect1 = element1.getBoundingClientRect();
+    const rect2 = element2.getBoundingClientRect();
+    return !(
+        rect1.top > rect2.bottom ||
+        rect1.bottom < rect2.top ||
+        rect1.left > rect2.right ||
+        rect1.right < rect2.left
+    );
+}
+
+// Display result of fusion
+function displayResult(result) {
+    const resultDisplay = document.getElementById('result');
+    resultDisplay.textContent = result;
+}
