@@ -10,41 +10,25 @@
     <div class="game-card">
         <h1>Elemental Fusion</h1>
         <p>Combine elements to create new ones and discover a world of possibilities!</p>
-        
-        <!-- Element Selection -->
-        <select id="element1">
-            <option value="fire">Fire</option>
-            <option value="water">Water</option>
-            <option value="earth">Earth</option>
-            <option value="air">Air</option>
-            <option value="man">Man</option>
-            <option value="toilet">Toilet</option>
-            <option value="metal">Metal</option>
-            <option value="electricity">Electricity</option>
-            <option value="life">Life</option>
-            <option value="computer">Computer</option>
-            <option value="robot">Robot</option>
-            <option value="internet">Internet</option>
-            <!-- Add more base elements as needed -->
-        </select>
-        
-        <select id="element2">
-            <option value="fire">Fire</option>
-            <option value="water">Water</option>
-            <option value="earth">Earth</option>
-            <option value="air">Air</option>
-            <option value="man">Man</option>
-            <option value="toilet">Toilet</option>
-            <option value="metal">Metal</option>
-            <option value="electricity">Electricity</option>
-            <option value="life">Life</option>
-            <option value="computer">Computer</option>
-            <option value="robot">Robot</option>
-            <option value="internet">Internet</option>
-            <!-- Add more base elements as needed -->
-        </select>
-        
-        <button id="combine-button">Combine</button>
+
+        <!-- Element Selection (initially hidden) -->
+        <div id="element-selection" class="hidden">
+            <select id="element1">
+                <option value="fire">Fire</option>
+                <option value="water">Water</option>
+                <option value="earth">Earth</option>
+                <option value="air">Air</option>
+            </select>
+            
+            <select id="element2">
+                <option value="fire">Fire</option>
+                <option value="water">Water</option>
+                <option value="earth">Earth</option>
+                <option value="air">Air</option>
+            </select>
+            
+            <button id="combine-button">Combine</button>
+        </div>
         
         <!-- Result Display -->
         <p>Result: <span id="result">None</span></p>
@@ -55,6 +39,10 @@
             <ul id="discovered-elements">
                 <!-- Discovered elements will be dynamically added here -->
             </ul>
+        </div>
+
+        <div id="element-container">
+            <!-- Elements will be displayed here -->
         </div>
     </div>
 
