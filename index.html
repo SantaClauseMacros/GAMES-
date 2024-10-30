@@ -1,62 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fun Game Website</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elemental Fusion</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- Navbar -->
-  <header class="navbar">
-    <h1>Game Hub</h1>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#games">Games</a>
-      <a href="#community">Community</a>
-      <a href="#leaderboard">Leaderboard</a>
-    </nav>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero" id="home">
-    <h2>Welcome to Game Hub!</h2>
-    <p>Play, Connect, Compete!</p>
-    <a href="#games" class="play-button">Play Now</a>
-  </section>
-
-  <!-- Games Section -->
-  <section class="games" id="games">
-    <h2>Trending Games</h2>
-    <div class="game-list">
-      <div class="game-card">
-        <img src="game1-thumbnail.jpg" alt="Game 1">
-        <p>Game 1</p>
-      </div>
-      <div class="game-card">
-        <img src="game2-thumbnail.jpg" alt="Game 2">
-        <p>Game 2</p>
-      </div>
-      <!-- Add more games as needed -->
+    <div class="game-card">
+        <h1>Elemental Fusion</h1>
+        <p>Combine elements to create new ones and discover a world of possibilities!</p>
+        
+        <!-- Element Selection -->
+        <select id="element1">
+            <option value="fire">Fire</option>
+            <option value="water">Water</option>
+            <option value="earth">Earth</option>
+            <option value="air">Air</option>
+            <option value="man">Man</option>
+            <option value="toilet">Toilet</option>
+            <option value="metal">Metal</option>
+            <option value="electricity">Electricity</option>
+            <option value="life">Life</option>
+            <option value="computer">Computer</option>
+            <option value="robot">Robot</option>
+            <option value="internet">Internet</option>
+            <!-- Add more base elements as needed -->
+        </select>
+        
+        <select id="element2">
+            <option value="fire">Fire</option>
+            <option value="water">Water</option>
+            <option value="earth">Earth</option>
+            <option value="air">Air</option>
+            <option value="man">Man</option>
+            <option value="toilet">Toilet</option>
+            <option value="metal">Metal</option>
+            <option value="electricity">Electricity</option>
+            <option value="life">Life</option>
+            <option value="computer">Computer</option>
+            <option value="robot">Robot</option>
+            <option value="internet">Internet</option>
+            <!-- Add more base elements as needed -->
+        </select>
+        
+        <button id="combine-button">Combine</button>
+        
+        <!-- Result Display -->
+        <p>Result: <span id="result">None</span></p>
+        
+        <!-- Discovery Index -->
+        <div id="discovery-index">
+            <h4>Discovery Index</h4>
+            <ul id="discovered-elements">
+                <!-- Discovered elements will be dynamically added here -->
+            </ul>
+        </div>
     </div>
-  </section>
 
-  <!-- Community Section -->
-  <section class="community" id="community">
-    <h2>Join the Community</h2>
-    <p>Chat with players, share tips, and make new friends!</p>
-  </section>
-
-  <!-- Leaderboard Section -->
-  <section class="leaderboard" id="leaderboard">
-    <h2>Top Players</h2>
-    <p>See where you rank among the best players!</p>
-  </section>
-
-  <footer>
-    <p>&copy; 2024 Game Hub</p>
-  </footer>
-
+    <script src="script.js"></script>
 </body>
 </html>
