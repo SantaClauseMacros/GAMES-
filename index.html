@@ -1,33 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Science Fun</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>Welcome to Science Fun!</h1>
-        <p>Explore the wonders of science!</p>
-    </header>
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'g') { // Press 'g' to show the game area
+        document.getElementById('hidden-game-area').style.display = 'block';
+    }
+});
 
-    <section id="science-content">
-        <h2>Interesting Science Facts</h2>
-        <ul>
-            <li>Water is the only substance that is found naturally in three forms: liquid, solid, and gas.</li>
-            <li>Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still edible.</li>
-            <li>Bananas are berries, but strawberries are not!</li>
-        </ul>
-    </section>
-
-    <div id="hidden-game-area" style="display:none;">
-        <h2>Hidden Game Area</h2>
-        <button onclick="startGame('game1')">Play Game 1</button>
-        <button onclick="startGame('game2')">Play Game 2</button>
-        <div id="game-output"></div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+function startGame(game) {
+    const output = document.getElementById('game-output');
+    if (game === 'game1') {
+        output.innerHTML = '<p>You are playing Game 1! (This can be a mini game)</p>';
+    } else if (game === 'game2') {
+        output.innerHTML = '<p>You are playing Game 2! (This can also be a mini game)</p>';
+    }
+}
