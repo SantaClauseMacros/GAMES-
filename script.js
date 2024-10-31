@@ -155,4 +155,209 @@ function colorGuessingGame(output) {
     const randomColor = getRandomColor();
     output.innerHTML = `
         <h3>Color Guessing Game</h3>
-        <p>Guess the color: <span style="color: ${randomColor
+        <p>Guess the color: <span style="color: ${randomColor};">${randomColor}</span></p>
+        <input type="text" id="color-guess" placeholder="Enter your guess">
+        <button onclick="checkColorGuess()">Guess</button>
+        <p id="color-result"></p>
+    `;
+
+    function checkColorGuess() {
+        const userGuess = document.getElementById('color-guess').value.toLowerCase();
+        const result = document.getElementById('color-result');
+        if (userGuess === randomColor) {
+            result.innerText = 'You guessed it right!';
+        } else {
+            result.innerText = `Wrong! The correct color was ${randomColor}.`;
+        }
+    }
+
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+}
+
+// 5. Higher or Lower
+function higherLowerGame(output) {
+    let currentNumber = Math.floor(Math.random() * 100) + 1;
+    output.innerHTML = `
+        <h3>Higher or Lower</h3>
+        <p>Current number: <span id="current-number">${currentNumber}</span></p>
+        <button onclick="nextNumber('higher')">Higher</button>
+        <button onclick="nextNumber('lower')">Lower</button>
+        <p id="hl-result"></p>
+    `;
+
+    function nextNumber(guess) {
+        const nextNumber = Math.floor(Math.random() * 100) + 1;
+        const result = document.getElementById('hl-result');
+        document.getElementById('current-number').innerText = nextNumber;
+        if ((guess === 'higher' && nextNumber > currentNumber) || 
+            (guess === 'lower' && nextNumber < currentNumber)) {
+            result.innerText = 'You guessed right!';
+        } else {
+            result.innerText = 'Wrong guess! Try again.';
+        }
+        currentNumber = nextNumber; // Update the current number
+    }
+}
+
+// 6. Emoji Guessing Game
+function emojiGuessingGame(output) {
+    const emojis = ['😊', '😢', '😂', '😎', '🤔'];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    output.innerHTML = `
+        <h3>Emoji Guessing Game</h3>
+        <p>What does this emoji mean? <span>${randomEmoji}</span></p>
+        <input type="text" id="emoji-guess" placeholder="Your guess">
+        <button onclick="checkEmojiGuess()">Guess</button>
+        <p id="emoji-result"></p>
+    `;
+
+    function checkEmojiGuess() {
+        const userGuess = document.getElementById('emoji-guess').value.toLowerCase();
+        const result = document.getElementById('emoji-result');
+        const meanings = {
+            '😊': 'Happy',
+            '😢': 'Sad',
+            '😂': 'Laughing',
+            '😎': 'Cool',
+            '🤔': 'Thinking'
+        };
+        if (meanings[randomEmoji] === userGuess) {
+            result.innerText = 'Correct! Well done!';
+        } else {
+            result.innerText = `Wrong! It means ${meanings[randomEmoji]}.`;
+        }
+    }
+}
+
+// 7. Memory Card Game
+function memoryCardGame(output) {
+    const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D'];
+    let selectedCards = [];
+    let matchedCards = 0;
+    output.innerHTML = `
+        <h3>Memory Card Game</h3>
+        <div id="memory-board"></div>
+        <p id="memory-result"></p>
+    `;
+    const board = document.getElementById('memory-board');
+    shuffle(cards);
+
+    cards.forEach((card, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'memory-card';
+        cardElement.setAttribute('data-card', card);
+        cardElement.addEventListener('click', () => handleCardClick(cardElement));
+        board.appendChild(cardElement);
+    });
+
+    function handleCardClick(cardElement) {
+        if (selectedCards.length < 2 && !cardElement.classList.contains('matched')) {
+            cardElement.innerText = cardElement.getAttribute('data-card');
+            selectedCards.push(cardElement);
+            if (selectedCards.length === 2) {
+                checkMatch();
+            }
+        }
+    }
+
+    function checkMatch() {
+        const [card1, card2] = selectedCards;
+        if (card1.getAttribute('data-card') === card2.getAttribute('data-card')) {
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+            matchedCards += 2;
+            if (matchedCards === cards.length) {
+                document.getElementById('memory-result').innerText = 'You matched all cards!';
+            }
+        } else {
+            setTimeout(() => {
+                card1.innerText = '';
+                card2.innerText = '';
+            }, 1000);
+        }
+        selectedCards = [];
+    }
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+}
+
+// 8. Word Scramble
+function wordScrambleGame(output) {
+    const words = ['javascript', 'programming', 'html', 'css', 'python'];
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    const scrambledWord = randomWord.split('').sort(() => Math.random() - 0.5).join('');
+    output.innerHTML = `
+        <h3>Word Scramble</h3>
+        <p>Unscramble the word: <strong>${scrambledWord}</strong></p>
+        <input type="text" id="word-guess" placeholder="Your guess">
+        <button onclick="checkWordGuess()">Guess</button>
+        <p id="word-result"></p>
+    `;
+
+    function checkWordGuess() {
+        const userGuess = document.getElementById('word-guess').value.toLowerCase();
+        const result = document.getElementById('word-result');
+        if (userGuess === randomWord) {
+            result.innerText = 'You unscrambled it right!';
+        } else {
+            result.innerText = `Wrong! The correct word was ${randomWord}.`;
+        }
+    }
+}
+
+// 9. Dice Roll Simulator
+function diceRollGame(output) {
+    output.innerHTML = `
+        <h3>Dice Roll Simulator</h3>
+        <button onclick="rollDice()">Roll the Dice</button>
+        <p id="dice-result"></p>
+    `;
+
+    function rollDice() {
+        const diceValue = Math.floor(Math.random() * 6) + 1;
+        document.getElementById('dice-result').innerText = `You rolled a ${diceValue}!`;
+    }
+}
+
+// 10. Simple Simon Says
+function simonSaysGame(output) {
+    const colors = ['red', 'green', 'blue', 'yellow'];
+    let sequence = [];
+    let userSequence = [];
+    output.innerHTML = `
+        <h3>Simon Says</h3>
+        <button onclick="startSimon()">Start Game</button>
+        <div id="simon-buttons"></div>
+        <p id="simon-result"></p>
+    `;
+
+    function startSimon() {
+        sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+        displaySequence();
+    }
+
+    function displaySequence() {
+        const buttons = document.getElementById('simon-buttons');
+        buttons.innerHTML = '';
+        sequence.forEach((color, index) => {
+            setTimeout(() => {
+                const button = document.createElement('div');
+                button.className = 'simon-button';
+                button.style.backgroundColor = color;
+                buttons.appendChild(button);
+            }, index * 1000);
+        });
+    }
+}
