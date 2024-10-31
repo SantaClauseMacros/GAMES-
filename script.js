@@ -216,21 +216,40 @@ function deleteCombo() {
     }
 }
 
-// Function to handle drag and drop
+// Function to combine two combos
+function combineCombos(combo1, combo2) {
+    // Check if both combos exist
+    if (combos[combo1] && combos[combo2]) {
+        const newComboKey = `${combo1}+${combo2}`;
+        if (!(newComboKey in combos)) {
+            combos[newComboKey] = `Combined: ${combos[combo1]} & ${combos[combo2]} 🎉`;
+            updateComboList();
+            saveCombos();
+            alert(`New Combo Created: ${newComboKey} - ${combos[newComboKey]}`);
+        } else {
+            alert("This combo already exists!");
+        }
+    }
+}
+
+// Function to handle drop event for combining combos
 function onDrop(event) {
     event.preventDefault();
-    const comboKey = event.dataTransfer.getData("text/plain");
-    if (comboKey in combos) {
-        const droppedCombo = combos[comboKey];
-        alert(`You dropped: ${comboKey} - ${droppedCombo}`);
+    const comboKey1 = event.dataTransfer.getData("text/plain");
+    const comboKey2 = event.target.textContent.split(":")[0];
+    
+    if (comboKey1 && comboKey2 && comboKey1 !== comboKey2) {
+        combineCombos(comboKey1, comboKey2);
     }
 }
 
 // Set up event listeners
 document.getElementById("create-button").onclick = createCombo;
 document.getElementById("delete-button").onclick = deleteCombo;
-document.getElementById("combo-list").ondrop = onDrop;
-document.getElementById("combo-list").ondragover = (event) => event.preventDefault();
+const comboList = document.getElementById("combo-list");
+comboList.ondrop = onDrop;
+comboList.ondragover = (event) => event.preventDefault();
 
 // Load existing combos on startup
 loadCombos();
+updateComboList();
