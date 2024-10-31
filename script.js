@@ -1,19 +1,19 @@
 // Initialize the combos object
 const combos = {
-    // Add predefined combos
-    "fire+water": "Steam",
-    "fire+earth": "Magma",
-    "water+earth": "Mud",
-    "air+fire": "Lightning",
-    "light+darkness": "Shadow",
-    "water+air": "Cloud",
-    "earth+air": "Dust",
-    "fire+electricity": "Plasma",
-    "nature+magic": "Life",
-    "time+space": "Dimension",
-    "soul+chaos": "Spiritual Energy",
+    // Existing combos
+    "fire+water": "Steam ☁️",
+    "fire+earth": "Magma 🌋",
+    "water+earth": "Mud 🏞️",
+    "air+fire": "Lightning ⚡",
+    "light+darkness": "Shadow 🌑",
+    "water+air": "Cloud ☁️",
+    "earth+air": "Dust 🌪️",
+    "fire+electricity": "Plasma 🔥⚡",
+    "nature+magic": "Life 🌿",
+    "time+space": "Dimension 🌀",
+    "soul+chaos": "Spiritual Energy 🌌",
 
-    // Expanded Technology Memes
+    // Technology Memes
     "ai+meme": "🤖 AI Meme",
     "robot+human": "🤯 Uncanny Valley",
     "smartphone+brain": "📱 Tech Brain",
@@ -131,7 +131,31 @@ const combos = {
     "interactive+art": "🖌️ Participatory Creation",
     "virtual+reality+art": "🕶️ Immersive Experience",
     "collaborative+project": "🤝 Creative Synergy",
-    "experimental+media": "🎬 Boundary-Pushing Art"
+    "experimental+media": "🎬 Boundary-Pushing Art",
+
+    // New combos with emojis
+    "fire+ice": "Steam Explosion 💥",
+    "light+fire": "Solar Flare ☀️🔥",
+    "darkness+water": "Shadow Wave 🌊🌑",
+    "earth+fire": "Volcano Eruption 🌋🔥",
+    "electricity+metal": "Conductive Shock ⚡️🔩",
+    "wind+fire": "Wildfire 🌪️🔥",
+    "metal+earth": "Iron Mountain ⛰️🔩",
+    "lightning+water": "Electrified Wave 🌊⚡",
+    "time+wind": "Time Warp ⏳🌬️",
+    "magic+chaos": "Chaos Magic 🎩✨",
+
+    // More cultural combos
+    "music+dance": "Groove Beat 🎶💃",
+    "art+history": "Cultural Masterpiece 🎨📜",
+    "travel+photography": "Wanderlust Capture 🌍📸",
+    "book+movie": "Adaptation Twist 📖🎬",
+    "food+history": "Culinary Legacy 🍽️🕰️",
+    "language+culture": "Linguistic Fusion 🌐🌈",
+    "science+art": "Scientific Creativity 🔬🎨",
+    "tech+art": "Digital Creativity 💻🎭",
+    "nature+science": "Natural Wonders 🌳🔍",
+    "community+art": "Collaborative Creation 🤝🎨"
 };
 
 // Function to save combos to localStorage
@@ -152,14 +176,12 @@ function loadCombos() {
 // Function to update the displayed combo list
 function updateComboList() {
     const comboList = document.getElementById("combo-list");
-    comboList.innerHTML = "";
-    for (const combo in combos) {
+    comboList.innerHTML = '';
+    for (const key in combos) {
         const li = document.createElement("li");
-        li.textContent = combo + ": " + combos[combo];
+        li.textContent = `${key}: ${combos[key]}`;
         li.draggable = true;
-        li.ondragstart = (e) => {
-            e.dataTransfer.setData("text/plain", combo);
-        };
+        li.ondragstart = (event) => event.dataTransfer.setData("text/plain", key);
         comboList.appendChild(li);
     }
 }
