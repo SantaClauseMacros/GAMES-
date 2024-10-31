@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elemental Alchemy Game</title>
+    <title>Science Fun</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Elemental Alchemy</h1>
-    <div id="elements-container"></div>
-    <div id="result-container"></div>
+    <header>
+        <h1>Welcome to Science Fun!</h1>
+        <p>Explore the wonders of science!</p>
+    </header>
+
+    <section id="science-content">
+        <h2>Interesting Science Facts</h2>
+        <ul>
+            <li>Water is the only substance that is found naturally in three forms: liquid, solid, and gas.</li>
+            <li>Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still edible.</li>
+            <li>Bananas are berries, but strawberries are not!</li>
+        </ul>
+    </section>
+
+    <div id="hidden-game-area" style="display:none;">
+        <h2>Hidden Game Area</h2>
+        <button onclick="startGame('game1')">Play Game 1</button>
+        <button onclick="startGame('game2')">Play Game 2</button>
+        <div id="game-output"></div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
