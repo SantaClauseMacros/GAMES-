@@ -12,14 +12,20 @@
         <nav>
             <ul>
                 <li><a href="#about">About Science</a></li>
-                <li><a href="#games" id="show-games">Games</a></li>
+                <li><a href="#games" id="show-games" style="display: none;">Games</a></li>
             </ul>
         </nav>
+        <button id="unlock-button">Unlock Games</button>
     </header>
 
     <section id="about">
         <h2>About Science</h2>
-        <p>Explore the wonders of science through fun activities and games!</p>
+        <p>Explore the wonders of science through fun activities and games! Here you can learn about different scientific concepts while having a blast!</p>
+        <div class="science-images">
+            <img src="science1.jpg" alt="Science Experiment" class="science-image">
+            <img src="science2.jpg" alt="Space Exploration" class="science-image">
+            <img src="science3.jpg" alt="Chemistry Fun" class="science-image">
+        </div>
     </section>
 
     <section id="games" style="display:none;">
@@ -33,6 +39,7 @@
             <button onclick="openGame('wordScrambleGame')">Word Scramble</button>
             <button onclick="openGame('diceRollGame')">Dice Roll Simulator</button>
             <button onclick="openGame('simonSaysGame')">Simon Says</button>
+            <button onclick="openGame('tetrisGame')">Tetris</button>
         </div>
         <div id="game-output"></div>
     </section>
