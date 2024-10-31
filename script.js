@@ -234,10 +234,12 @@ let draggedElement = null;
 // Drag start event handler
 function handleDragStart(event) {
     draggedElement = event.target;
+    console.log("Dragging started:", draggedElement.textContent);
 }
 
 // Drag end event handler with collision detection for mixing elements
 function handleDragEnd(event) {
+    console.log("Dragging ended:", draggedElement.textContent);
     const elements = document.querySelectorAll('.element-card');
 
     elements.forEach(targetElement => {
@@ -257,6 +259,7 @@ function handleDragEnd(event) {
                 result = "Unknown";
             }
 
+            console.log("Elements combined:", element1, "+", element2, "=", result);
             displayResult(result);
 
             if (result !== "Unknown" && !discoveredElements.has(result)) {
