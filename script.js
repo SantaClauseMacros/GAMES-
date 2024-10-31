@@ -1,261 +1,331 @@
 const combinations = {
-    // Basic combinations with emojis
-    "fire+water": "🔥💧 Steam",
-    "fire+earth": "🔥🌍 Lava",
-    "fire+air": "🔥🌬️ Energy",
-    "water+earth": "💧🌍 Mud",
-    "water+air": "💧🌬️ Mist",
-    "earth+air": "🌍🌬️ Dust",
-    "fire+fire": "🔥🔥 Sun",
-    "water+water": "💧💧 Ocean",
-    "earth+earth": "🌍🌍 Mountain",
-    "air+air": "🌬️🌬️ Sky",
-
-    // Nature expansions
-    "earth+water": "🌍💧 Swamp",
-    "swamp+sun": "🦠☀️ Life",
-    "swamp+plant": "🦠🌱 Algae",
-    "sun+water": "☀️💧 Rainbow",
-    "water+mountain": "💧🏔️ River",
-    "mountain+sky": "🏔️🌬️ Peak",
-    "sky+ocean": "🌬️🌊 Horizon",
-    "horizon+sun": "🌅 Sunset",
-    "sunset+ocean": "🌄 Reflection",
-    "rainbow+sky": "🌈🌬️ Aurora",
-    "swamp+life": "🐸 Frog",
-    "ocean+volcano": "🌋🏝️ Island",
-    "earth+sun": "🌍☀️ Desert",
-    "mountain+river": "🏞️ Valley",
+    // Basic Elements Remain
+    "fire+water": "💨 Steam",
+    "fire+earth": "🌋 Lava",
+    "fire+air": "⚡ Plasma",
+    "water+earth": "🥜 Clay",
+    "water+air": "☁️ Cloud",
+    "earth+air": "💨 Dust",
     
-    // Life and biology elements
-    "life+water": "🐟 Fish",
-    "life+earth": "🌱 Plant",
-    "plant+water": "🌳 Tree",
-    "tree+earth": "🌲 Forest",
-    "forest+fire": "🔥🌲 Wildfire",
-    "life+life": "👤 Human",
-    "human+life": "👶 Baby",
-    "human+human": "👨‍👩‍👦 Family",
-    "human+earth": "👩‍🌾 Farmer",
-    "human+water": "🏊 Swimmer",
-    "human+air": "🧑‍✈️ Pilot",
-    "life+mountain": "🐐 Goat",
-    "life+ocean": "🐋 Whale",
-
-    // Expanded Animal Kingdom
-    "life+sky": "🦅 Bird",
-    "bird+earth": "🐓 Chicken",
-    "bird+water": "🦆 Duck",
-    "bird+fire": "🦅 Phoenix",
-    "life+desert": "🐪 Camel",
-    "water+fish": "🐠 Fish School",
-    "forest+animal": "🐺 Wolf Pack",
-    "ocean+shark": "🦈 Shark",
-    "life+jungle": "🦍 Gorilla",
-    "mountain+goat": "🐐 Mountain Goat",
-    "bird+water": "🦢 Swan",
+    // Meme Combinations
+    "toilet+dance": "🚽 Skibidi Toilet",
+    "skibidi toilet+skibidi toilet": "👾 Skibidi Army",
+    "skibidi toilet+human": "🕺 Camera Man",
+    "skibidi army+city": "🌆 Skibidi World",
+    "toilet+music": "🎵 Toilet Beat",
+    "toilet beat+dance": "💃 Toilet Groove",
     
-    // Mythical Creatures
-    "animal+fire": "🐉 Dragon",
-    "animal+magic": "🦄 Unicorn",
-    "human+spirit": "👻 Ghost",
-    "human+forest": "🧝 Elf",
-    "sea+serpent": "🐉 Leviathan",
-    "beast+magic": "🐉 Chimera",
-    "forest+spirit": "🧚 Fairy",
-    "human+wizard": "🧙 Sorcerer",
-    "wizard+stone": "🗿 Golem",
-    "fire+magic": "🔥 Phoenix",
-    "life+spirit": "🧞 Genie",
+    // Internet Culture
+    "cat+keyboard": "😺 Keyboard Cat",
+    "doge+money": "🐕 Dogecoin",
+    "pepe+sad": "🐸 Sad Pepe",
+    "nyan+cat": "🌈 Nyan Cat",
+    "cat+bread": "🍞 Cat Bread",
+    "cat+box": "📦 Boxy Cat",
     
-    // Space Elements
-    "star+sky": "🌌 Galaxy",
-    "galaxy+energy": "⚫ Black Hole",
-    "space+black hole": "🕳️ Wormhole",
-    "astronaut+moon": "🚀🌕 Moon Landing",
-    "moon+star": "🌠 Nebula",
-    "nebula+energy": "🌠 Supernova",
-    "galaxy+universe": "🌌 Cosmos",
-    "sun+planet": "🌞 Solar System",
-    "planet+moon": "🛰️ Satellite",
-    "rocket+fuel": "🚀 Rocket Launch",
-    "planet+life": "🌍 Earth",
-    "star+time": "🕰️ Light Year",
-    "planet+orbit": "🌍🌌 Orbit",
+    // Modern Memes
+    "corn+kid": "🌽 It's Corn!",
+    "rizz+human": "😎 Rizz Master",
+    "cap+speech": "🧢 Cap Detected",
+    "sus+person": "📮 Amogus",
+    "amogus+group": "👥 Sus Crew",
+    "chad+wisdom": "🗿 Gigachad",
+    "cat+crying": "😿 Crying Cat",
+    "dog+cheems": "🐕 Cheems",
+    "bonk+dog": "🔨 Bonk Doge",
     
-    // Expanded Human Elements
-    "human+tree": "🏡 Treehouse",
-    "human+forest": "🏕️ Camping",
-    "human+city": "🏙️ Citizen",
-    "city+electricity": "💡 Power Grid",
-    "human+campfire": "🔥 Camping",
-    "human+party": "🎉 Celebration",
-    "celebration+music": "🎶 Festival",
-    "festival+food": "🍔 Fair",
-    "celebrity+fame": "⭐ Star",
-    "celebrity+camera": "📸 Photograph",
-    "human+robot": "🤖 Cyborg",
+    // Viral Trends
+    "backrooms+wall": "🏃 Backrooms Entity",
+    "fnaf+pizza": "🐻 Freddy",
+    "lean+purple": "💜 Lean Monster",
+    "mcdonalds+grimace": "💜 Grimace Shake",
+    "potato+camera": "📸 Bad Quality",
+    "skill+issue": "💀 Skill Issue",
     
-    // Technology Expansions
-    "human+machine": "👷 Engineer",
-    "human+metal": "🔨 Tool",
-    "tool+metal": "⚙️ Machine",
-    "machine+electricity": "🔋 Electric Device",
-    "electricity+water": "⚡💧 Hydroelectric Power",
-    "machine+fire": "🚂 Steam Engine",
-    "engine+water": "🚂 Steam Train",
-    "battery+sun": "🔋 Solar Panel",
-    "AI+game": "♟️ Chess Bot",
-    "AI+internet": "🌐 Data Stream",
-    "data+cloud": "☁️ Cloud Storage",
-    "AI+virtual reality": "🕶️ Simulated World",
-    "robot+internet": "🤖📶 Network Bot",
-    "robot+factory": "🏭 Assembly Line",
-    "engineer+robot": "🤖 AI Assistant",
+    // Gaming Memes
+    "grass+gamer": "🌱 Touch Grass",
+    "sweat+game": "💦 Sweaty Gamer",
+    "toxic+game": "☢️ Toxic Lobby",
+    "rage+quit": "😡 Ragequit",
+    "gaming+chair": "💺 Pro Gamer",
+    "l+ratio": "📉 L + Ratio",
     
-    // Elements Inspired by Mythology
-    "human+lightning": "⚡ Zeus",
-    "sea+horse": "🦄 Hippocampus",
-    "sky+magic": "🦄 Pegasus",
-    "earth+magic": "👹 Giant",
-    "sea+magic": "🐉 Kraken",
-    "forest+magic": "🧚 Druid",
-    "fire+spirit": "🔥 Fire Spirit",
-    "spirit+stone": "🧟 Zombie",
-    "underworld+fire": "🔥 Demon",
-    "storm+magic": "🌩️ Thor",
+    // TikTok Culture
+    "brain+rot": "🧠 Brainrot",
+    "brainrot+video": "🎥 POV Brainrot",
+    "dance+trend": "💃 TikTok Dance",
+    "filter+face": "👁️ Beauty Filter",
+    "story+time": "⏰ Storytime",
+    "npc+video": "🤖 NPC Stream",
+    "dance+npc": "🕺 NPC Dance",
     
-    // Fun Extras
-    "human+internet": "🌐 Netizen",
-    "network+data": "📂 Database",
-    "battery+light": "🔋 Flashlight",
-    "robot+AI": "🤖 Smart Robot",
-    "network+AI": "🧠 Neural Network",
-    "machine+car": "🚗 Car Engine",
-    "human+drone": "🚁 Drone Pilot",
-    "cloud+robot": "🤖 Cloud Bot",
-    "cloud+internet": "☁️ Networked Cloud",
+    // Youtube Culture
+    "like+subscribe": "👍 Call to Action",
+    "youtube+drama": "☕ Tea",
+    "apology+video": "😢 Apology Video",
+    "reaction+face": "😱 Thumbnail Face",
+    "clickbait+arrow": "⭐ Youtube Clickbait",
+    "minecraft+craft": "⛏️ Minecraft Steve",
     
-    // Expanded Fantasy and Creative Elements
-    "human+magic": "🧙 Wizard",
-    "wizard+fire": "🔥 Fire Spell",
-    "wizard+water": "❄️ Ice Spell",
-    "wizard+earth": "🪨 Stone Golem",
-    "wizard+forest": "🧝 Druid",
-    "life+mountain": "🐐 Mountain Goat",
-    "bird+fire": "🦅 Phoenix",
-    "dragon+ice": "🐉 Frost Dragon",
-    "spirit+forest": "🧚 Wood Nymph",
+    // Cursed Combinations
+    "brainrot+skibidi": "🤯 Maximum Brainrot",
+    "curse+image": "👻 Cursed Image",
+    "meme+deep fry": "🍳 Deep Fried Meme",
+    "cringe+post": "😬 Cringepost",
+    "shitpost+quality": "💩 Quality Shitpost",
     
-    // Additional Space and Time Elements
-    "star+moon": "🌌 Constellation",
-    "black hole+time": "⏳ Time Warp",
-    "star+life": "🌟 Celestial Being",
-    "galaxy+planet": "🌠 Universe",
-    "cosmos+galaxy": "🌌 Infinite Space",
-    "planet+moon": "🛰️ Lunar Base",
-    "cosmos+time": "🌌 Timeless Space",
-    "star+nebula": "🌌 Milky Way",
+    // Modern Slang Elements
+    "fr+fr": "💯 Fr Fr No Cap",
+    "bussin+food": "😋 Bussin Food",
+    "rizz+infinite": "✨ Infinite Rizz",
+    "cap+detect": "🧢 Cap Detector",
+    "real+true": "💯 Real",
+    "slay+queen": "👑 Slay",
     
-    // Expanded Mystical and Experimental Combinations
-    "spirit+time": "⏳ Eternal Spirit",
-    "storm+forest": "🌲 Thunderstorm",
-    "swamp+creature": "👹 Swamp Monster",
-    "fire+beast": "🔥🐉 Fire Dragon",
-    "spirit+ocean": "🌊 Water Spirit",
-    "forest+ocean": "🏞️ Coastal Forest",
-    "desert+magic": "🌵 Desert Mirage",
-    "lightning+cloud": "🌩️ Storm Cloud",
-    "sand+water": "🏖️ Beach",
-    "mountain+desert": "🏜️ Rocky Desert",
+    // Meta Memes
+    "meme+death": "💀 Dead Meme",
+    "trend+speed": "⚡ Speed Run",
+    "viral+die": "📉 Forgotten Trend",
+    "comedy+homicide": "🪦 Comedy Cemetery",
+    "random+humor": "🎲 Gen Z Humor",
+    
+    // Backrooms Related
+    "backrooms+level": "🚪 Level 0",
+    "level 0+danger": "👻 Entity",
+    "backrooms+exit": "🏃 No-clip",
+    "entity+human": "💀 Lost Soul",
+    "backrooms+party": "🎉 Level Fun",
+    
+    // FNAF Elements
+    "freddy+night": "🐻 Night Shift",
+    "animatronic+pizza": "🍕 Pizza Time",
+    "security+camera": "📹 Security Feed",
+    "golden+freddy": "✨ Golden Freddy",
+    "puppet+box": "🎁 Music Box",
+    
+    // Modern Internet Phenomena
+    "ai+art": "🎨 AI Generated",
+    "nft+money": "🐒 Bored Ape",
+    "crypto+crash": "📉 Crypto Winter",
+    "chad+virgin": "📊 Virgin vs Chad",
+    "copium+cope": "😤 Copium Overdose",
+    
+    // Base Elements for Crafting
+    "dance": "💃 Dance Move",
+    "toilet": "🚽 Toilet",
+    "music": "🎵 Music",
+    "meme": "😂 Meme",
+    "trend": "📈 Trend",
+    "internet": "🌐 Internet",
+    "gaming": "🎮 Gaming",
+    "video": "📱 Video",
+    "cat": "😺 Cat",
+    "dog": "🐕 Dog",
+    "human": "👤 Human",
+    "brain": "🧠 Brain",
+    "social": "📱 Social Media",
+    "quality": "✨ Quality",
+    
+    // Extra Silly Combinations
+    "skill issue+cope": "😭 Copium Factory",
+    "npc+brainrot": "🤖 NPC Brainrot",
+    "skibidi+backrooms": "🚽 Toilet Rooms",
+    "freddy+toilet": "🐻 Freddy Toilet",
+    "amogus+toilet": "📮 Sus Toilet",
+    "lean+toilet": "💜 Lean Toilet",
+    "rizz+toilet": "😎 Toilet Rizz",
+    "real+toilet": "💯 Real Toilet",
+    "brainrot+maximum": "🤯 Terminal Brainrot",
+    "skibidi+ohio": "😱 Ohio Toilet",
+    "toilet+peace": "☮️ Peaceful Toilet",
+    "ohio+peace": "⚔️ Impossible",
+    
+    // Even More Base Elements
+    "peace": "☮️ Peace",
+    "ohio": "🏴 Ohio",
+    "quality": "✨ Quality",
+    "maximum": "⚡ Maximum",
+    "deep fry": "🍳 Deep Fry",
+    "cursed": "👻 Cursed",
+    "sus": "📮 Sus",
+    "real": "💯 Real",
+    "cap": "🧢 Cap",
+    "rizz": "😎 Rizz",
+    "lean": "💜 Lean",
+    "grimace": "💜 Grimace",
+    "freddy": "🐻 Freddy",
+    "backrooms": "🚪 Backrooms",
+    "entity": "👻 Entity",
+    "amogus": "📮 Amogus",
+    
+    // Extra Combinations
+    "ohio+toilet": "😱 Ohio Toilet Invasion",
+    "grimace+toilet": "💜 Grimace Toilet",
+    "toilet+entity": "👻 Toilet Entity",
+    "skibidi+real": "💯 Real Skibidi",
+    "ohio+real": "💯 Real Ohio",
+    "brainrot+quality": "✨ Quality Brainrot",
+    "toilet+sus": "📮 Sus Toilet",
+    "grimace+ohio": "💜 Purple Ohio",
+    "freddy+ohio": "🐻 Ohio Freddy",
+    "backrooms+ohio": "😱 Ohio Rooms",
+    "entity+ohio": "👻 Ohio Entity",
+    "amogus+ohio": "📮 Ohio Sus",
+    
+    // Absolutely Cursed Combinations
+    "ohio+maximum": "😱 Maximum Ohio",
+    "brainrot+ohio": "🤯 Ohio Brainrot",
+    "toilet+maximum": "🚽 Maximum Toilet",
+    "sus+maximum": "📮 Maximum Sus",
+    "grimace+maximum": "💜 Maximum Grimace",
+    "freddy+maximum": "🐻 Maximum Freddy",
+    "entity+maximum": "👻 Maximum Entity",
+    "amogus+maximum": "📮 Maximum Sus",
+    "skibidi+maximum": "🕺 Maximum Skibidi",
+    
+    // Final Boss Combinations
+    "maximum ohio+maximum toilet": "💀 Ohio Toilet Apocalypse",
+    "maximum brainrot+ohio toilet": "🤯 Terminal Ohio Brainrot",
+    "maximum sus+ohio toilet": "📮 Ultimate Ohio Sus",
+    "maximum grimace+ohio toilet": "💜 Ultimate Grimace Ohio",
+    "maximum freddy+ohio toilet": "🐻 Ultimate Ohio Freddy",
+    "maximum entity+ohio toilet": "👻 Ultimate Ohio Entity",
+    "maximum amogus+ohio toilet": "📮 Ultimate Ohio Sus",
+    "maximum skibidi+ohio toilet": "🕺 Ultimate Ohio Skibidi"
 };
 
-// Initial elements to start with in the game
-let discoveredElements = new Set(["🔥 Fire", "💧 Water", "🌍 Earth", "🌬️ Air"]);
+// Initialize with basic elements
+let discoveredElements = new Set([
+    "🔥 Fire", "💧 Water", "🌍 Earth", "🌬️ Air",
+    "🚽 Toilet", "💃 Dance", "🎵 Music",
+    "🏴 Ohio", "📮 Sus", "💜 Lean",
+    "😱 Maximum", "🤯 Brainrot", "🕺 Skibidi"
+]);
+
+let draggedElement = null;
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-    updateDiscoveryIndex();
-    discoveredElements.forEach(addElementCard);
+    initializeGame();
+    setupDragListeners();
 });
 
-function updateDiscoveryIndex() {
-    const discoveredList = document.getElementById('discovered-elements');
-    discoveredList.innerHTML = '';
-
-    discoveredElements.forEach(element => {
-        const listItem = document.createElement('li');
-        listItem.textContent = element;
-        discoveredList.appendChild(listItem);
-    });
+function initializeGame() {
+    updateDiscoveryList();
+    discoveredElements.forEach(addElementCard);
 }
 
 function addElementCard(element) {
-    const elementContainer = document.getElementById('element-container');
-    const newCard = document.createElement('div');
-    newCard.className = 'element-card';
-    newCard.textContent = element;
-    newCard.setAttribute("data-element", element);
-    elementContainer.appendChild(newCard);
-
-    newCard.style.left = `${Math.random() * 80}vw`; // Random position
-    newCard.style.top = `${Math.random() * 60}vh`; // Random position
-
-    newCard.draggable = true;
-    newCard.ondragstart = handleDragStart;
-    newCard.ondragend = handleDragEnd;
+    const container = document.getElementById('element-container');
+    const card = document.createElement('div');
+    card.className = 'element-card';
+    card.textContent = element;
+    card.setAttribute('data-element', element);
+    
+    // Random position within visible area
+    card.style.left = `${Math.random() * (container.clientWidth - 100)}px`;
+    card.style.top = `${Math.random() * (container.clientHeight - 100)}px`;
+    
+    container.appendChild(card);
+    setupCardDragging(card);
 }
 
-let draggedElement = null;
-
-function handleDragStart(event) {
-    draggedElement = event.target;
-    console.log("Dragging started:", draggedElement.textContent);
+function setupCardDragging(card) {
+    card.addEventListener('mousedown', startDragging);
+    card.addEventListener('touchstart', startDragging, { passive: false });
 }
 
-function handleDragEnd(event) {
-    console.log("Dragging ended:", draggedElement.textContent);
+function startDragging(e) {
+    e.preventDefault();
+    isDragging = true;
+    draggedElement = e.target;
+    
+    const rect = draggedElement.getBoundingClientRect();
+    const touch = e.type === 'touchstart' ? e.touches[0] : e;
+    
+    dragOffsetX = touch.clientX - rect.left;
+    dragOffsetY = touch.clientY - rect.top;
+    
+    draggedElement.style.zIndex = 1000;
+    draggedElement.style.cursor = 'grabbing';
+}
+
+function setupDragListeners() {
+    const container = document.getElementById('element-container');
+    
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('touchmove', onDrag, { passive: false });
+    
+    document.addEventListener('mouseup', endDragging);
+    document.addEventListener('touchend', endDragging);
+    
+    container.addEventListener('mouseleave', endDragging);
+    container.addEventListener('touchcancel', endDragging);
+}
+
+function onDrag(e) {
+    if (!isDragging || !draggedElement) return;
+    e.preventDefault();
+    
+    const touch = e.type === 'touchmove' ? e.touches[0] : e;
+    const container = document.getElementById('element-container');
+    const rect = container.getBoundingClientRect();
+    
+    let newX = touch.clientX - rect.left - dragOffsetX;
+    let newY = touch.clientY - rect.top - dragOffsetY;
+    
+    // Boundary checking
+    newX = Math.max(0, Math.min(newX, container.clientWidth - draggedElement.offsetWidth));
+    newY = Math.max(0, Math.min(newY, container.clientHeight - draggedElement.offsetHeight));
+    
+    draggedElement.style.left = `${newX}px`;
+    draggedElement.style.top = `${newY}px`;
+    
+    checkCollisions();
+}
+
+function endDragging() {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    if (draggedElement) {
+        draggedElement.style.zIndex = '';
+        draggedElement.style.cursor = 'grab';
+        draggedElement = null;
+    }
+}
+
+function checkCollisions() {
+    if (!draggedElement) return;
+    
     const elements = document.querySelectorAll('.element-card');
-
     elements.forEach(targetElement => {
-        if (targetElement !== draggedElement && isTouching(draggedElement, targetElement)) {
-            const element1 = draggedElement.getAttribute("data-element");
-            const element2 = targetElement.getAttribute("data-element");
-
-            const key1 = `${element1}+${element2}`;
-            const key2 = `${element2}+${element1}`;
-            let result;
-
-            if (combinations[key1]) {
-                result = combinations[key1];
-            } else if (combinations[key2]) {
-                result = combinations[key2];
-            } else {
-                result = "Unknown";
-            }
-
-            displayResult(result);
-
-            if (result !== "Unknown" && !discoveredElements.has(result)) {
-                discoveredElements.add(result);
-                updateDiscoveryIndex();
-                addElementCard(result);
-            }
+        if (targetElement !== draggedElement && isColliding(draggedElement, targetElement)) {
+            combineElements(draggedElement, targetElement);
         }
     });
 }
 
-function isTouching(element1, element2) {
-    const rect1 = element1.getBoundingClientRect();
-    const rect2 = element2.getBoundingClientRect();
-    return !(
-        rect1.top > rect2.bottom ||
-        rect1.bottom < rect2.top ||
-        rect1.left > rect2.right ||
-        rect1.right < rect2.left
-    );
+function isColliding(elem1, elem2) {
+    const rect1 = elem1.getBoundingClientRect();
+    const rect2 = elem2.getBoundingClientRect();
+    
+    return !(rect1.right < rect2.left || 
+             rect1.left > rect2.right || 
+             rect1.bottom < rect2.top || 
+             rect1.top > rect2.bottom);
 }
 
-function displayResult(result) {
-    const resultDisplay = document.getElementById('result');
-    resultDisplay.textContent = result;
-}
+function combineElements(elem1, elem2) {
+    const element1 = elem1.getAttribute('data-element');
+    const element2 = elem2.getAttribute('data-element');
+    
+    const combination1 = `${element1}+${element2}`;
+    const combination2 = `${element2}+${element1}`;
+    
+    let result = combinations[combination1] || combinations[combination2];
+    
+    if (result && !discoveredElements.has(result)) {
+        discoveredElements.add(result);
