@@ -1,357 +1,214 @@
-const combinations = {
-    // Basic Elements Remain
-    "fire+water": "💨 Steam",
-    "fire+earth": "🌋 Lava",
-    "fire+air": "⚡ Plasma",
-    "water+earth": "🥜 Clay",
-    "water+air": "☁️ Cloud",
-    "earth+air": "💨 Dust",
-    
-    // Meme Combinations
-    "toilet+dance": "🚽 Skibidi Toilet",
-    "skibidi toilet+skibidi toilet": "👾 Skibidi Army",
-    "skibidi toilet+human": "🕺 Camera Man",
-    "skibidi army+city": "🌆 Skibidi World",
-    "toilet+music": "🎵 Toilet Beat",
-    "toilet beat+dance": "💃 Toilet Groove",
-    
-    // Internet Culture
-    "cat+keyboard": "😺 Keyboard Cat",
-    "doge+money": "🐕 Dogecoin",
-    "pepe+sad": "🐸 Sad Pepe",
-    "nyan+cat": "🌈 Nyan Cat",
-    "cat+bread": "🍞 Cat Bread",
-    "cat+box": "📦 Boxy Cat",
-    
-    // Modern Memes
-    "corn+kid": "🌽 It's Corn!",
-    "rizz+human": "😎 Rizz Master",
-    "cap+speech": "🧢 Cap Detected",
-    "sus+person": "📮 Amogus",
-    "amogus+group": "👥 Sus Crew",
-    "chad+wisdom": "🗿 Gigachad",
-    "cat+crying": "😿 Crying Cat",
-    "dog+cheems": "🐕 Cheems",
-    "bonk+dog": "🔨 Bonk Doge",
-    
-    // Viral Trends
-    "backrooms+wall": "🏃 Backrooms Entity",
-    "fnaf+pizza": "🐻 Freddy",
-    "lean+purple": "💜 Lean Monster",
-    "mcdonalds+grimace": "💜 Grimace Shake",
-    "potato+camera": "📸 Bad Quality",
-    "skill+issue": "💀 Skill Issue",
-    
-    // Gaming Memes
-    "grass+gamer": "🌱 Touch Grass",
-    "sweat+game": "💦 Sweaty Gamer",
-    "toxic+game": "☢️ Toxic Lobby",
-    "rage+quit": "😡 Ragequit",
-    "gaming+chair": "💺 Pro Gamer",
-    "l+ratio": "📉 L + Ratio",
-    
-    // TikTok Culture
-    "brain+rot": "🧠 Brainrot",
-    "brainrot+video": "🎥 POV Brainrot",
-    "dance+trend": "💃 TikTok Dance",
-    "filter+face": "👁️ Beauty Filter",
-    "story+time": "⏰ Storytime",
-    "npc+video": "🤖 NPC Stream",
-    "dance+npc": "🕺 NPC Dance",
-    
-    // Youtube Culture
-    "like+subscribe": "👍 Call to Action",
-    "youtube+drama": "☕ Tea",
-    "apology+video": "😢 Apology Video",
-    "reaction+face": "😱 Thumbnail Face",
-    "clickbait+arrow": "⭐ Youtube Clickbait",
-    "minecraft+craft": "⛏️ Minecraft Steve",
-    
-    // Cursed Combinations
-    "brainrot+skibidi": "🤯 Maximum Brainrot",
-    "curse+image": "👻 Cursed Image",
-    "meme+deep fry": "🍳 Deep Fried Meme",
-    "cringe+post": "😬 Cringepost",
-    "shitpost+quality": "💩 Quality Shitpost",
-    
-    // Modern Slang Elements
-    "fr+fr": "💯 Fr Fr No Cap",
-    "bussin+food": "😋 Bussin Food",
-    "rizz+infinite": "✨ Infinite Rizz",
-    "cap+detect": "🧢 Cap Detector",
-    "real+true": "💯 Real",
-    "slay+queen": "👑 Slay",
-    
-    // Meta Memes
-    "meme+death": "💀 Dead Meme",
-    "trend+speed": "⚡ Speed Run",
-    "viral+die": "📉 Forgotten Trend",
-    "comedy+homicide": "🪦 Comedy Cemetery",
-    "random+humor": "🎲 Gen Z Humor",
-    
-    // Backrooms Related
-    "backrooms+level": "🚪 Level 0",
-    "level 0+danger": "👻 Entity",
-    "backrooms+exit": "🏃 No-clip",
-    "entity+human": "💀 Lost Soul",
-    "backrooms+party": "🎉 Level Fun",
-    
-    // FNAF Elements
-    "freddy+night": "🐻 Night Shift",
-    "animatronic+pizza": "🍕 Pizza Time",
-    "security+camera": "📹 Security Feed",
-    "golden+freddy": "✨ Golden Freddy",
-    "puppet+box": "🎁 Music Box",
-    
-    // Modern Internet Phenomena
-    "ai+art": "🎨 AI Generated",
-    "nft+money": "🐒 Bored Ape",
-    "crypto+crash": "📉 Crypto Winter",
-    "chad+virgin": "📊 Virgin vs Chad",
-    "copium+cope": "😤 Copium Overdose",
-    
-    // Base Elements for Crafting
-    "dance": "💃 Dance Move",
-    "toilet": "🚽 Toilet",
-    "music": "🎵 Music",
-    "meme": "😂 Meme",
-    "trend": "📈 Trend",
-    "internet": "🌐 Internet",
-    "gaming": "🎮 Gaming",
-    "video": "📱 Video",
-    "cat": "😺 Cat",
-    "dog": "🐕 Dog",
-    "human": "👤 Human",
-    "brain": "🧠 Brain",
-    "social": "📱 Social Media",
-    "quality": "✨ Quality",
-    
-    // Extra Silly Combinations
-    "skill issue+cope": "😭 Copium Factory",
-    "npc+brainrot": "🤖 NPC Brainrot",
-    "skibidi+backrooms": "🚽 Toilet Rooms",
-    "freddy+toilet": "🐻 Freddy Toilet",
-    "amogus+toilet": "📮 Sus Toilet",
-    "lean+toilet": "💜 Lean Toilet",
-    "rizz+toilet": "😎 Toilet Rizz",
-    "real+toilet": "💯 Real Toilet",
-    "brainrot+maximum": "🤯 Terminal Brainrot",
-    "skibidi+ohio": "😱 Ohio Toilet",
-    "toilet+peace": "☮️ Peaceful Toilet",
-    "ohio+peace": "⚔️ Impossible",
-    
-    // Even More Base Elements
-    "peace": "☮️ Peace",
-    "ohio": "🏴 Ohio",
-    "quality": "✨ Quality",
-    "maximum": "⚡ Maximum",
-    "deep fry": "🍳 Deep Fry",
-    "cursed": "👻 Cursed",
-    "sus": "📮 Sus",
-    "real": "💯 Real",
-    "cap": "🧢 Cap",
-    "rizz": "😎 Rizz",
-    "lean": "💜 Lean",
-    "grimace": "💜 Grimace",
-    "freddy": "🐻 Freddy",
-    "backrooms": "🚪 Backrooms",
-    "entity": "👻 Entity",
-    "amogus": "📮 Amogus",
-    
-    // Extra Combinations
-    "ohio+toilet": "😱 Ohio Toilet Invasion",
-    "grimace+toilet": "💜 Grimace Toilet",
-    "toilet+entity": "👻 Toilet Entity",
-    "skibidi+real": "💯 Real Skibidi",
-    "ohio+real": "💯 Real Ohio",
-    "brainrot+quality": "✨ Quality Brainrot",
-    "toilet+sus": "📮 Sus Toilet",
-    "grimace+ohio": "💜 Purple Ohio",
-    "freddy+ohio": "🐻 Ohio Freddy",
-    "backrooms+ohio": "😱 Ohio Rooms",
-    "entity+ohio": "👻 Ohio Entity",
-    "amogus+ohio": "📮 Ohio Sus",
-    
-    // Absolutely Cursed Combinations
-    "ohio+maximum": "😱 Maximum Ohio",
-    "brainrot+ohio": "🤯 Ohio Brainrot",
-    "toilet+maximum": "🚽 Maximum Toilet",
-    "sus+maximum": "📮 Maximum Sus",
-    "grimace+maximum": "💜 Maximum Grimace",
-    "freddy+maximum": "🐻 Maximum Freddy",
-    "entity+maximum": "👻 Maximum Entity",
-    "amogus+maximum": "📮 Maximum Sus",
-    "skibidi+maximum": "🕺 Maximum Skibidi",
-    
-    // Final Boss Combinations
-    "maximum ohio+maximum toilet": "💀 Ohio Toilet Apocalypse",
-    "maximum brainrot+ohio toilet": "🤯 Terminal Ohio Brainrot",
-    "maximum sus+ohio toilet": "📮 Ultimate Ohio Sus",
-    "maximum grimace+ohio toilet": "💜 Ultimate Grimace Ohio",
-    "maximum freddy+ohio toilet": "🐻 Ultimate Ohio Freddy",
-    "maximum entity+ohio toilet": "👻 Ultimate Ohio Entity",
-    "maximum amogus+ohio toilet": "📮 Ultimate Ohio Sus",
-    "maximum skibidi+ohio toilet": "🕺 Ultimate Ohio Skibidi"
+// Initialize the combos object
+const combos = {
+    // Add predefined combos
+    "fire+water": "Steam",
+    "fire+earth": "Magma",
+    "water+earth": "Mud",
+    "air+fire": "Lightning",
+    "light+darkness": "Shadow",
+    "water+air": "Cloud",
+    "earth+air": "Dust",
+    "fire+electricity": "Plasma",
+    "nature+magic": "Life",
+    "time+space": "Dimension",
+    "soul+chaos": "Spiritual Energy",
+
+    // Expanded Technology Memes
+    "ai+meme": "🤖 AI Meme",
+    "robot+human": "🤯 Uncanny Valley",
+    "smartphone+brain": "📱 Tech Brain",
+    "algorithm+life": "🧮 Life Algorithm",
+    "qr code+face": "🔲 QR Face",
+    "selfie+ego": "🤳 Selfie Culture",
+    "streaming+gamer": "🎥 Content Creator",
+    "blockchain+money": "💸 Crypto Hype",
+    "vpn+location": "🌐 Fake Location",
+    "drone+camera": "📸 Aerial Perspective",
+
+    // Sports and Pop Culture
+    "footballer+celebration": "🏆 Goal Dance",
+    "celebrity+drama": "🌟 Tabloid Headline",
+    "music+autotune": "🎤 Vocal Processor",
+    "athlete+meme": "💪 Sports Moment",
+    "actor+oscar": "🏆 Red Carpet Moment",
+    "concert+viral": "🎵 Stage Fail",
+    "karaoke+fail": "🎤 Cringe Performance",
+    "movie+trailer": "🎬 Spoiler Alert",
+    "award+speech": "🏆 Acceptance Ramble",
+    "influencer+pose": "📸 Instagram Aesthetic",
+
+    // Food and Culinary Culture
+    "avocado+toast": "🥑 Millennial Meal",
+    "ramen+instant": "🍜 Broke Student Cuisine",
+    "tiktok+recipe": "👨‍🍳 Viral Cooking",
+    "food+filter": "🍽️ Insta-worthy Dish",
+    "mukbang+stream": "🍴 Eating Show",
+    "chef+challenge": "🔪 Culinary Showdown",
+    "smoothie+health": "🥤 Wellness Trend",
+    "coffee+monday": "☕ Survival Juice",
+    "street food+video": "🌭 Food Vlog",
+    "pineapple+pizza": "🍍 Controversial Topping",
+
+    // Fashion and Aesthetics
+    "streetwear+logo": "👕 Hypebeast Style",
+    "fashion+trend": "👗 Viral Look",
+    "sneaker+limited": "👟 Collector's Item",
+    "makeup+tutorial": "💄 Beauty Guru",
+    "thrift+fashion": "👚 Sustainable Style",
+    "cosplay+character": "🦸 Character Transformation",
+    "vintage+filter": "📸 Retro Aesthetic",
+    "outfit+mirror": "🪞 OOTD Post",
+    "designer+knockoff": "👜 Inspired Design",
+    "haul+shopping": "🛍️ Retail Therapy",
+
+    // Environmental and Social Awareness
+    "climate+protest": "🌍 Eco Movement",
+    "sustainability+lifestyle": "♻️ Green Living",
+    "activism+social media": "✊ Digital Protest",
+    "volunteer+community": "🤝 Local Impact",
+    "recycling+art": "🎨 Eco Creativity",
+    "zero waste+challenge": "🌱 Sustainable Goal",
+    "biodiversity+education": "🌿 Nature Awareness",
+    "renewable+energy": "☀️ Clean Power",
+    "conservation+wildlife": "🐘 Species Protection",
+    "urban+gardening": "🌻 City Green Space",
+
+    // Global and Cultural Phenomena
+    "language+meme": "🌐 Global Humor",
+    "translation+fail": "🗣️ Lost in Translation",
+    "cultural+exchange": "🌈 Global Connection",
+    "tradition+modern": "🌍 Cultural Fusion",
+    "folklore+reboot": "📖 Mythical Update",
+    "diaspora+identity": "🌎 Cultural Roots",
+    "indigenous+wisdom": "🏹 Traditional Knowledge",
+    "multilingual+joke": "🗣️ Polyglot Humor",
+    "cultural+festival": "🎉 Global Celebration",
+    "heritage+preservation": "🏛️ Cultural Legacy",
+
+    // Science and Exploration
+    "space+meme": "🚀 Cosmic Humor",
+    "quantum+physics": "🔬 Mind-Bending Science",
+    "mars+rover": "🛰️ Red Planet Exploration",
+    "climate+research": "🌡️ Scientific Insight",
+    "dna+technology": "🧬 Genetic Frontier",
+    "astronomy+discovery": "🌌 Cosmic Wonder",
+    "robotics+ai": "🤖 Technological Synergy",
+    "neuroscience+mind": "🧠 Cognitive Frontier",
+    "deep sea+exploration": "🌊 Ocean Mystery",
+    "particle+physics": "⚛️ Atomic Insight",
+
+    // Health and Wellness
+    "meditation+app": "🧘 Digital Mindfulness",
+    "fitness+challenge": "💪 Workout Motivation",
+    "mental health+awareness": "💭 Emotional Support",
+    "nutrition+science": "🥗 Dietary Insight",
+    "sleep+technology": "😴 Rest Innovation",
+    "therapy+online": "🗨️ Digital Counseling",
+    "workout+motivation": "🏋️ Fitness Journey",
+    "holistic+wellness": "🌈 Balanced Living",
+    "stress+management": "🧘 Calm Technique",
+    "self-care+routine": "💆 Personal Nurturing",
+
+    // Educational and Learning
+    "online+course": "📚 Digital Learning",
+    "coding+kid": "💻 Tech Education",
+    "language+app": "🌐 Global Communication",
+    "stem+education": "🔬 Future Innovation",
+    "podcast+learning": "🎧 Audio Knowledge",
+    "documentary+insight": "🎥 Deep Dive",
+    "science+communication": "🌍 Knowledge Sharing",
+    "research+breakthrough": "🔍 Academic Discovery",
+    "interdisciplinary+study": "🌈 Holistic Learning",
+    "educational+technology": "💡 Smart Learning",
+
+    // Creative Arts and Expression
+    "digital+art": "🎨 Pixel Creativity",
+    "street art+photography": "📸 Urban Canvas",
+    "poetry+technology": "📝 Digital Verse",
+    "music+algorithm": "🎵 Generative Sound",
+    "performance+livestream": "🎭 Virtual Stage",
+    "animation+storytelling": "🌈 Animated Narrative",
+    "interactive+art": "🖌️ Participatory Creation",
+    "virtual+reality+art": "🕶️ Immersive Experience",
+    "collaborative+project": "🤝 Creative Synergy",
+    "experimental+media": "🎬 Boundary-Pushing Art"
 };
 
-// Initialize with basic elements
-let discoveredElements = new Set([
-    "🔥 Fire", "💧 Water", "🌍 Earth", "🌬️ Air",
-    "🚽 Toilet", "💃 Dance", "🎵 Music",
-    "🏴 Ohio", "📮 Sus", "💜 Lean",
-    "😱 Maximum", "🤯 Brainrot", "🕺 Skibidi"
-]);
-
-let draggedElement = null;
-let isDragging = false;
-let dragOffsetX = 0;
-let dragOffsetY = 0;
-
-document.addEventListener('DOMContentLoaded', () => {
-    initializeGame();
-    setupDragListeners();
-});
-
-function initializeGame() {
-    updateDiscoveryList();
-    discoveredElements.forEach(addElementCard);
+// Function to save combos to localStorage
+function saveCombos() {
+    localStorage.setItem("combos", JSON.stringify(combos));
+    alert("Combos saved successfully!");
 }
 
-function addElementCard(element) {
-    const container = document.getElementById('element-container');
-    const card = document.createElement('div');
-    card.className = 'element-card';
-    card.textContent = element;
-    card.setAttribute('data-element', element);
-    
-    // Random position within visible area
-    card.style.left = `${Math.random() * (container.clientWidth - 100)}px`;
-    card.style.top = `${Math.random() * (container.clientHeight - 100)}px`;
-    
-    container.appendChild(card);
-    setupCardDragging(card);
-}
-
-function setupCardDragging(card) {
-    card.addEventListener('mousedown', startDragging);
-    card.addEventListener('touchstart', startDragging, { passive: false });
-}
-
-function startDragging(e) {
-    e.preventDefault();
-    isDragging = true;
-    draggedElement = e.target;
-    
-    const rect = draggedElement.getBoundingClientRect();
-    const touch = e.type === 'touchstart' ? e.touches[0] : e;
-    
-    dragOffsetX = touch.clientX - rect.left;
-    dragOffsetY = touch.clientY - rect.top;
-    
-    draggedElement.style.zIndex = 1000;
-    draggedElement.style.cursor = 'grabbing';
-}
-
-function setupDragListeners() {
-    const container = document.getElementById('element-container');
-    
-    document.addEventListener('mousemove', onDrag);
-    document.addEventListener('touchmove', onDrag, { passive: false });
-    
-    document.addEventListener('mouseup', endDragging);
-    document.addEventListener('touchend', endDragging);
-    
-    container.addEventListener('mouseleave', endDragging);
-    container.addEventListener('touchcancel', endDragging);
-}
-
-function onDrag(e) {
-    if (!isDragging || !draggedElement) return;
-    e.preventDefault();
-    
-    const touch = e.type === 'touchmove' ? e.touches[0] : e;
-    const container = document.getElementById('element-container');
-    const rect = container.getBoundingClientRect();
-    
-    let newX = touch.clientX - rect.left - dragOffsetX;
-    let newY = touch.clientY - rect.top - dragOffsetY;
-    
-    // Boundary checking
-    newX = Math.max(0, Math.min(newX, container.clientWidth - draggedElement.offsetWidth));
-    newY = Math.max(0, Math.min(newY, container.clientHeight - draggedElement.offsetHeight));
-    
-    draggedElement.style.left = `${newX}px`;
-    draggedElement.style.top = `${newY}px`;
-    
-    checkCollisions();
-}
-
-function endDragging() {
-    if (!isDragging) return;
-    
-    isDragging = false;
-    if (draggedElement) {
-        draggedElement.style.zIndex = '';
-        draggedElement.style.cursor = 'grab';
-        draggedElement = null;
+// Function to load combos from localStorage
+function loadCombos() {
+    const storedCombos = localStorage.getItem("combos");
+    if (storedCombos) {
+        Object.assign(combos, JSON.parse(storedCombos));
+        updateComboList();
     }
 }
 
-function checkCollisions() {
-    if (!draggedElement) return;
-    
-    const elements = document.querySelectorAll('.element-card');
-    elements.forEach(targetElement => {
-        if (targetElement !== draggedElement && isColliding(draggedElement, targetElement)) {
-            combineElements(draggedElement, targetElement);
-        }
-    });
-}
-
-function isColliding(elem1, elem2) {
-    const rect1 = elem1.getBoundingClientRect();
-    const rect2 = elem2.getBoundingClientRect();
-    
-    return !(rect1.right < rect2.left || 
-             rect1.left > rect2.right || 
-             rect1.bottom < rect2.top || 
-             rect1.top > rect2.bottom);
-}
-
-function combineElements(elem1, elem2) {
-    const element1 = elem1.getAttribute('data-element');
-    const element2 = elem2.getAttribute('data-element');
-    
-    const combination1 = `${element1}+${element2}`;
-    const combination2 = `${element2}+${element1}`;
-    
-    let result = combinations[combination1] || combinations[combination2];
-    
-    if (result && !discoveredElements.has(result)) {
-        discoveredElements.add(result);
-                addElementCard(result);
-        updateDiscoveryList();
-        showCombinationEffect(elem1, elem2, result);
+// Function to update the displayed combo list
+function updateComboList() {
+    const comboList = document.getElementById("combo-list");
+    comboList.innerHTML = "";
+    for (const combo in combos) {
+        const li = document.createElement("li");
+        li.textContent = combo + ": " + combos[combo];
+        li.draggable = true;
+        li.ondragstart = (e) => {
+            e.dataTransfer.setData("text/plain", combo);
+        };
+        comboList.appendChild(li);
     }
 }
 
-function showCombinationEffect(elem1, elem2, result) {
-    const resultDisplay = document.getElementById('result');
-    resultDisplay.textContent = `Combined ${elem1.textContent} + ${elem2.textContent} = ${result}`;
-    resultDisplay.style.opacity = 1;
+// Function to create a new combo
+function createCombo() {
+    const key = prompt("Enter combo (e.g. fire+water):");
+    const value = prompt("Enter description:");
     
-    setTimeout(() => {
-        resultDisplay.style.opacity = 0;
-    }, 2000);
+    if (key && value && !(key in combos)) {
+        combos[key] = value;
+        updateComboList();
+        saveCombos();
+        alert("Combo added!");
+    } else if (key in combos) {
+        alert("Combo already exists!");
+    }
 }
 
-function updateDiscoveryList() {
-    const list = document.getElementById('discovered-elements');
-    list.innerHTML = '';
-    
-    Array.from(discoveredElements).sort().forEach(element => {
-        const li = document.createElement('li');
-        li.textContent = element;
-        list.appendChild(li);
-    });
+// Function to delete selected combo
+function deleteCombo() {
+    const comboList = document.getElementById("combo-list");
+    const selectedCombo = comboList.querySelector("li.selected");
+    if (selectedCombo) {
+        const comboKey = selectedCombo.textContent.split(":")[0];
+        delete combos[comboKey];
+        updateComboList();
+        saveCombos();
+        alert("Combo deleted!");
+    } else {
+        alert("Select a combo to delete.");
+    }
 }
+
+// Function to handle drag and drop
+function onDrop(event) {
+    event.preventDefault();
+    const comboKey = event.dataTransfer.getData("text/plain");
+    if (comboKey in combos) {
+        const droppedCombo = combos[comboKey];
+        alert(`You dropped: ${comboKey} - ${droppedCombo}`);
+    }
+}
+
+// Set up event listeners
+document.getElementById("create-button").onclick = createCombo;
+document.getElementById("delete-button").onclick = deleteCombo;
+document.getElementById("combo-list").ondrop = onDrop;
+document.getElementById("combo-list").ondragover = (event) => event.preventDefault();
+
+// Load existing combos on startup
+loadCombos();
