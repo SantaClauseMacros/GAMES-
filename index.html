@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Element Fusion Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Combo Creator</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #combo-list { list-style-type: none; padding: 0; }
+        #combo-list li { padding: 8px; cursor: pointer; }
+        #combo-list li:hover { background-color: #f0f0f0; }
+        #combo-list li.selected { background-color: #c0e1ff; }
+    </style>
 </head>
 <body>
-    <h1>Element Fusion Game</h1>
-    <div id="play-area">
-        <div id="element-container"></div>
-        <p id="result">Drag elements together to mix them!</p>
-        <h2>Discovered Elements</h2>
-        <ul id="discovered-elements"></ul>
-    </div>
-    <script src="script.js"></script>
+
+<h1>Combo Creator</h1>
+<ul id="combo-list"></ul>
+<button id="create-button">Create Combo</button>
+<button id="delete-button">Delete Combo</button>
+
+<script src="script.js"></script>
 </body>
 </html>
