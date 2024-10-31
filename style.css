@@ -1,14 +1,14 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
+    background: linear-gradient(to right, #4a90e2, #9013fe);
+    color: white;
 }
 
 header {
-    background: #007BFF;
-    color: white;
-    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
     text-align: center;
 }
 
@@ -22,18 +22,23 @@ nav ul li {
     margin: 0 15px;
 }
 
-nav ul li a {
-    color: white;
-    text-decoration: none;
+h1 {
+    font-size: 2.5em;
 }
 
-section {
-    padding: 20px;
-    margin: 20px 0;
+h2 {
+    border-bottom: 2px solid white;
 }
 
-h1, h2 {
-    color: #333;
+.science-images {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.science-image {
+    width: 200px;
+    margin: 0 10px;
 }
 
 .game-buttons {
@@ -43,64 +48,60 @@ h1, h2 {
     margin: 20px 0;
 }
 
-.game-buttons button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
+button {
+    background-color: #4a90e2;
     border: none;
+    padding: 10px 20px;
+    margin: 5px;
     border-radius: 5px;
-    background-color: #007BFF;
     color: white;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.game-buttons button:hover {
-    background-color: #0056b3;
+button:hover {
+    background-color: #6ec6ff;
 }
 
 .tic-tac-toe-board {
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    gap: 5px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     margin: 20px auto;
+    max-width: 200px;
 }
 
 .tic-tac-toe-cell {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    border: 1px solid #333;
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff;
+    color: #000;
+    font-size: 2em;
+    text-align: center;
+    line-height: 60px;
+    border: 1px solid #000;
     cursor: pointer;
 }
 
-.memory-board {
+.memory-cards {
     display: grid;
-    grid-template-columns: repeat(4, 100px);
-    gap: 5px;
-    margin: 20px auto;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .memory-card {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    border: 1px solid #333;
-    background-color: #fff;
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    color: #000;
+    text-align: center;
+    line-height: 50px;
     cursor: pointer;
+    border: 1px solid #000;
 }
 
-footer {
-    text-align: center;
-    padding: 10px;
-    background: #007BFF;
-    color: white;
-    position: relative;
-    bottom: 0;
-    width: 100%;
+#tetrisCanvas {
+    display: block;
+    margin: 20px auto;
 }
