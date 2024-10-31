@@ -329,3 +329,29 @@ function combineElements(elem1, elem2) {
     
     if (result && !discoveredElements.has(result)) {
         discoveredElements.add(result);
+                addElementCard(result);
+        updateDiscoveryList();
+        showCombinationEffect(elem1, elem2, result);
+    }
+}
+
+function showCombinationEffect(elem1, elem2, result) {
+    const resultDisplay = document.getElementById('result');
+    resultDisplay.textContent = `Combined ${elem1.textContent} + ${elem2.textContent} = ${result}`;
+    resultDisplay.style.opacity = 1;
+    
+    setTimeout(() => {
+        resultDisplay.style.opacity = 0;
+    }, 2000);
+}
+
+function updateDiscoveryList() {
+    const list = document.getElementById('discovered-elements');
+    list.innerHTML = '';
+    
+    Array.from(discoveredElements).sort().forEach(element => {
+        const li = document.createElement('li');
+        li.textContent = element;
+        list.appendChild(li);
+    });
+}
