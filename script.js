@@ -1,206 +1,183 @@
-    const combinations = {
-    // Basic element combinations
-    "fire+water": "Steam",
-    "fire+earth": "Lava",
-    "fire+air": "Energy",
-    "water+earth": "Mud",
-    "water+air": "Mist",
-    "earth+air": "Dust",
-    "fire+fire": "Sun",
-    "water+water": "Ocean",
-    "earth+earth": "Mountain",
-    "air+air": "Sky",
+const combinations = {
+    // Basic combinations with emojis
+    "fire+water": "🔥💧 Steam",
+    "fire+earth": "🔥🌍 Lava",
+    "fire+air": "🔥🌬️ Energy",
+    "water+earth": "💧🌍 Mud",
+    "water+air": "💧🌬️ Mist",
+    "earth+air": "🌍🌬️ Dust",
+    "fire+fire": "🔥🔥 Sun",
+    "water+water": "💧💧 Ocean",
+    "earth+earth": "🌍🌍 Mountain",
+    "air+air": "🌬️🌬️ Sky",
 
-    // Nature and environment expansions
-    "earth+water": "Swamp",
-    "swamp+sun": "Life",
-    "swamp+plant": "Algae",
-    "sun+water": "Rainbow",
-    "water+mountain": "River",
-    "mountain+sky": "Peak",
-    "sky+ocean": "Horizon",
-    "horizon+sun": "Sunset",
-    "sunset+ocean": "Reflection",
-    "rainbow+sky": "Aurora",
-    "swamp+life": "Frog",
-    "ocean+volcano": "Island",
-    "earth+sun": "Desert",
-    "mountain+river": "Valley",
-
-    // Life and biology elements
-    "life+water": "Fish",
-    "life+earth": "Plant",
-    "plant+water": "Tree",
-    "tree+earth": "Forest",
-    "forest+fire": "Wildfire",
-    "life+life": "Human",
-    "human+life": "Baby",
-    "human+human": "Family",
-    "human+earth": "Farmer",
-    "human+water": "Swimmer",
-    "human+air": "Pilot",
-    "life+mountain": "Goat",
-    "life+ocean": "Whale",
-
-    // Animal kingdom expansion
-    "bird+water": "Duck",
-    "fish+air": "Flying Fish",
-    "whale+life": "Orca",
-    "tree+bird": "Nest",
-    "tree+insect": "Beehive",
-    "forest+bird": "Hawk",
-    "hawk+sky": "Eagle",
-    "whale+shark": "Megalodon",
-    "life+swamp": "Crocodile",
-    "water+frog": "Tadpole",
-
-    // Human and culture combos
-    "human+fire": "Campfire",
-    "campfire+food": "Cookout",
-    "human+campfire": "Camping",
-    "camping+fire": "S’mores",
-    "human+forest": "Explorer",
-    "human+tree": "Treehouse",
-    "human+stone": "House",
-    "house+stone": "Castle",
-    "castle+human": "Knight",
-    "knight+horse": "Cavalry",
-    "human+ocean": "Sailor",
-    "human+city": "Citizen",
-
-    // Technology and tools
-    "human+metal": "Tool",
-    "tool+metal": "Machine",
-    "machine+electricity": "Electric Car",
-    "electricity+metal": "Battery",
-    "electricity+water": "Hydroelectric Power",
-    "machine+fire": "Engine",
-    "engine+water": "Steam Engine",
-    "human+machine": "Engineer",
-    "engineer+electricity": "Circuit",
-    "engineer+metal": "Robot",
-    "robot+electricity": "AI",
-    "AI+internet": "Data Stream",
-    "data stream+cloud": "Cloud Storage",
-    "cloud+internet": "Network",
-    "network+data": "Database",
-    "AI+virtual reality": "Simulated World",
-    "human+robot": "Cyborg",
-
-    // Space elements
-    "star+sky": "Galaxy",
-    "galaxy+energy": "Black Hole",
-    "space+black hole": "Wormhole",
-    "wormhole+human": "Astronaut",
-    "astronaut+moon": "Moon Landing",
-    "moon+star": "Nebula",
-    "nebula+energy": "Supernova",
-    "galaxy+universe": "Cosmos",
-    "sun+planet": "Solar System",
-    "planet+moon": "Satellite",
-
-    // Fantasy and magic elements
-    "human+magic": "Wizard",
-    "wizard+fire": "Fireball",
-    "wizard+water": "Ice Spell",
-    "wizard+earth": "Stone Golem",
-    "wizard+air": "Levitation",
-    "wizard+forest": "Druid",
-    "druid+animal": "Beastmaster",
-    "animal+fire": "Dragon",
-    "water+dragon": "Sea Serpent",
-    "human+stone": "Golem",
-    "fire+magic": "Phoenix",
-    "sky+magic": "Spirit",
-    "earth+magic": "Giant",
-    "tree+magic": "Ent",
-    "spirit+human": "Ghost",
-    "soul+magic": "Necromancer",
-
-    // Science and advanced tech
-    "electricity+air": "Lightning",
-    "water+lightning": "Storm",
-    "storm+energy": "Thunderstorm",
-    "lightning+metal": "Conductor",
-    "conductor+electricity": "Superconductor",
-    "AI+internet": "Data Stream",
-    "battery+sun": "Solar Battery",
-    "electricity+robot": "Android",
-    "android+AI": "Sentient Robot",
-    "city+robot": "Smart City",
-    "robot+factory": "Assembly Line",
-    "robot+human": "Hybrid",
-    "internet+AI": "Intelligent Web",
-    "human+computer": "Programmer",
-    "programmer+AI": "Developer",
-    "cloud+virtual reality": "Virtual World",
-    "virtual world+human": "Avatar",
-
-    // Elements inspired by mythology
-    "human+lightning": "Zeus",
-    "sea+horse": "Hippocampus",
-    "sky+magic": "Pegasus",
-    "sea+serpent": "Leviathan",
-    "underworld+spirit": "Wraith",
-    "fire+underworld": "Demon",
-    "human+demon": "Warlock",
-    "sky+storm": "Thor",
-    "forest+beast": "Werewolf",
-    "wizard+beast": "Chimera",
-    "human+serpent": "Medusa",
-    "earth+giant": "Titan",
-
-    // Experimental and creative elements
-    "human+internet": "Netizen",
-    "netizen+network": "Influencer",
-    "influencer+fame": "Celebrity",
-    "celebrity+scandal": "Gossip",
-    "celebrity+camera": "Photograph",
-    "camera+art": "Photography",
-    "art+data": "NFT",
-    "computer+AI": "Virtual Assistant",
-    "battery+sun": "Solar Panel",
-    "AI+quantum computing": "Quantum AI",
-    "human+virtual world": "Gamer",
-    "gamer+competition": "eSports",
-
-    // Nature meets tech
-    "city+tree": "Urban Forest",
-    "electricity+city": "Power Grid",
-    "internet+light": "Fiber Optic",
-    "solar panel+city": "Eco City",
-    "storm+power grid": "Blackout",
-    "battery+forest": "Eco Battery",
-    "robot+forest": "Logging Machine",
-    "machine+ocean": "Submarine",
-    "human+submarine": "Explorer",
-
-    // Fun extras
-    "human+campfire": "Camping",
-    "human+party": "Celebration",
-    "celebration+music": "Festival",
-    "festival+food": "Fair",
-    "human+coffee": "Awake",
-    "coffee+morning": "Energy",
-    "human+society": "Community",
-    "community+city": "Metropolis",
-    "water+robot": "Underwater Bot",
-    "AI+data": "Machine Learning",
-    "internet+community": "Forum",
-    "forum+discussion": "Debate",
-    "AI+game": "Chess Bot",
+    // Nature expansions
+    "earth+water": "🌍💧 Swamp",
+    "swamp+sun": "🦠☀️ Life",
+    "swamp+plant": "🦠🌱 Algae",
+    "sun+water": "☀️💧 Rainbow",
+    "water+mountain": "💧🏔️ River",
+    "mountain+sky": "🏔️🌬️ Peak",
+    "sky+ocean": "🌬️🌊 Horizon",
+    "horizon+sun": "🌅 Sunset",
+    "sunset+ocean": "🌄 Reflection",
+    "rainbow+sky": "🌈🌬️ Aurora",
+    "swamp+life": "🐸 Frog",
+    "ocean+volcano": "🌋🏝️ Island",
+    "earth+sun": "🌍☀️ Desert",
+    "mountain+river": "🏞️ Valley",
     
-    // Add more if needed to reach exact total
+    // Life and biology elements
+    "life+water": "🐟 Fish",
+    "life+earth": "🌱 Plant",
+    "plant+water": "🌳 Tree",
+    "tree+earth": "🌲 Forest",
+    "forest+fire": "🔥🌲 Wildfire",
+    "life+life": "👤 Human",
+    "human+life": "👶 Baby",
+    "human+human": "👨‍👩‍👦 Family",
+    "human+earth": "👩‍🌾 Farmer",
+    "human+water": "🏊 Swimmer",
+    "human+air": "🧑‍✈️ Pilot",
+    "life+mountain": "🐐 Goat",
+    "life+ocean": "🐋 Whale",
+
+    // Expanded Animal Kingdom
+    "life+sky": "🦅 Bird",
+    "bird+earth": "🐓 Chicken",
+    "bird+water": "🦆 Duck",
+    "bird+fire": "🦅 Phoenix",
+    "life+desert": "🐪 Camel",
+    "water+fish": "🐠 Fish School",
+    "forest+animal": "🐺 Wolf Pack",
+    "ocean+shark": "🦈 Shark",
+    "life+jungle": "🦍 Gorilla",
+    "mountain+goat": "🐐 Mountain Goat",
+    "bird+water": "🦢 Swan",
+    
+    // Mythical Creatures
+    "animal+fire": "🐉 Dragon",
+    "animal+magic": "🦄 Unicorn",
+    "human+spirit": "👻 Ghost",
+    "human+forest": "🧝 Elf",
+    "sea+serpent": "🐉 Leviathan",
+    "beast+magic": "🐉 Chimera",
+    "forest+spirit": "🧚 Fairy",
+    "human+wizard": "🧙 Sorcerer",
+    "wizard+stone": "🗿 Golem",
+    "fire+magic": "🔥 Phoenix",
+    "life+spirit": "🧞 Genie",
+    
+    // Space Elements
+    "star+sky": "🌌 Galaxy",
+    "galaxy+energy": "⚫ Black Hole",
+    "space+black hole": "🕳️ Wormhole",
+    "astronaut+moon": "🚀🌕 Moon Landing",
+    "moon+star": "🌠 Nebula",
+    "nebula+energy": "🌠 Supernova",
+    "galaxy+universe": "🌌 Cosmos",
+    "sun+planet": "🌞 Solar System",
+    "planet+moon": "🛰️ Satellite",
+    "rocket+fuel": "🚀 Rocket Launch",
+    "planet+life": "🌍 Earth",
+    "star+time": "🕰️ Light Year",
+    "planet+orbit": "🌍🌌 Orbit",
+    
+    // Expanded Human Elements
+    "human+tree": "🏡 Treehouse",
+    "human+forest": "🏕️ Camping",
+    "human+city": "🏙️ Citizen",
+    "city+electricity": "💡 Power Grid",
+    "human+campfire": "🔥 Camping",
+    "human+party": "🎉 Celebration",
+    "celebration+music": "🎶 Festival",
+    "festival+food": "🍔 Fair",
+    "celebrity+fame": "⭐ Star",
+    "celebrity+camera": "📸 Photograph",
+    "human+robot": "🤖 Cyborg",
+    
+    // Technology Expansions
+    "human+machine": "👷 Engineer",
+    "human+metal": "🔨 Tool",
+    "tool+metal": "⚙️ Machine",
+    "machine+electricity": "🔋 Electric Device",
+    "electricity+water": "⚡💧 Hydroelectric Power",
+    "machine+fire": "🚂 Steam Engine",
+    "engine+water": "🚂 Steam Train",
+    "battery+sun": "🔋 Solar Panel",
+    "AI+game": "♟️ Chess Bot",
+    "AI+internet": "🌐 Data Stream",
+    "data+cloud": "☁️ Cloud Storage",
+    "AI+virtual reality": "🕶️ Simulated World",
+    "robot+internet": "🤖📶 Network Bot",
+    "robot+factory": "🏭 Assembly Line",
+    "engineer+robot": "🤖 AI Assistant",
+    
+    // Elements Inspired by Mythology
+    "human+lightning": "⚡ Zeus",
+    "sea+horse": "🦄 Hippocampus",
+    "sky+magic": "🦄 Pegasus",
+    "earth+magic": "👹 Giant",
+    "sea+magic": "🐉 Kraken",
+    "forest+magic": "🧚 Druid",
+    "fire+spirit": "🔥 Fire Spirit",
+    "spirit+stone": "🧟 Zombie",
+    "underworld+fire": "🔥 Demon",
+    "storm+magic": "🌩️ Thor",
+    
+    // Fun Extras
+    "human+internet": "🌐 Netizen",
+    "network+data": "📂 Database",
+    "battery+light": "🔋 Flashlight",
+    "robot+AI": "🤖 Smart Robot",
+    "network+AI": "🧠 Neural Network",
+    "machine+car": "🚗 Car Engine",
+    "human+drone": "🚁 Drone Pilot",
+    "cloud+robot": "🤖 Cloud Bot",
+    "cloud+internet": "☁️ Networked Cloud",
+    
+    // Expanded Fantasy and Creative Elements
+    "human+magic": "🧙 Wizard",
+    "wizard+fire": "🔥 Fire Spell",
+    "wizard+water": "❄️ Ice Spell",
+    "wizard+earth": "🪨 Stone Golem",
+    "wizard+forest": "🧝 Druid",
+    "life+mountain": "🐐 Mountain Goat",
+    "bird+fire": "🦅 Phoenix",
+    "dragon+ice": "🐉 Frost Dragon",
+    "spirit+forest": "🧚 Wood Nymph",
+    
+    // Additional Space and Time Elements
+    "star+moon": "🌌 Constellation",
+    "black hole+time": "⏳ Time Warp",
+    "star+life": "🌟 Celestial Being",
+    "galaxy+planet": "🌠 Universe",
+    "cosmos+galaxy": "🌌 Infinite Space",
+    "planet+moon": "🛰️ Lunar Base",
+    "cosmos+time": "🌌 Timeless Space",
+    "star+nebula": "🌌 Milky Way",
+    
+    // Expanded Mystical and Experimental Combinations
+    "spirit+time": "⏳ Eternal Spirit",
+    "storm+forest": "🌲 Thunderstorm",
+    "swamp+creature": "👹 Swamp Monster",
+    "fire+beast": "🔥🐉 Fire Dragon",
+    "spirit+ocean": "🌊 Water Spirit",
+    "forest+ocean": "🏞️ Coastal Forest",
+    "desert+magic": "🌵 Desert Mirage",
+    "lightning+cloud": "🌩️ Storm Cloud",
+    "sand+water": "🏖️ Beach",
+    "mountain+desert": "🏜️ Rocky Desert",
 };
 
-let discoveredElements = new Set(["Fire", "Water", "Earth", "Air"]);
+// Initial elements to start with in the game
+let discoveredElements = new Set(["🔥 Fire", "💧 Water", "🌍 Earth", "🌬️ Air"]);
 
 document.addEventListener('DOMContentLoaded', () => {
     updateDiscoveryIndex();
     discoveredElements.forEach(addElementCard);
 });
 
-// Function to update Discovery Index
 function updateDiscoveryIndex() {
     const discoveredList = document.getElementById('discovered-elements');
     discoveredList.innerHTML = '';
@@ -212,7 +189,6 @@ function updateDiscoveryIndex() {
     });
 }
 
-// Function to add element card dynamically and enable dragging
 function addElementCard(element) {
     const elementContainer = document.getElementById('element-container');
     const newCard = document.createElement('div');
@@ -231,13 +207,11 @@ function addElementCard(element) {
 
 let draggedElement = null;
 
-// Drag start event handler
 function handleDragStart(event) {
     draggedElement = event.target;
     console.log("Dragging started:", draggedElement.textContent);
 }
 
-// Drag end event handler with collision detection for mixing elements
 function handleDragEnd(event) {
     console.log("Dragging ended:", draggedElement.textContent);
     const elements = document.querySelectorAll('.element-card');
@@ -259,7 +233,6 @@ function handleDragEnd(event) {
                 result = "Unknown";
             }
 
-            console.log("Elements combined:", element1, "+", element2, "=", result);
             displayResult(result);
 
             if (result !== "Unknown" && !discoveredElements.has(result)) {
@@ -271,7 +244,6 @@ function handleDragEnd(event) {
     });
 }
 
-// Collision detection function
 function isTouching(element1, element2) {
     const rect1 = element1.getBoundingClientRect();
     const rect2 = element2.getBoundingClientRect();
@@ -283,7 +255,6 @@ function isTouching(element1, element2) {
     );
 }
 
-// Display result of fusion
 function displayResult(result) {
     const resultDisplay = document.getElementById('result');
     resultDisplay.textContent = result;
