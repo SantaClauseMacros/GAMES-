@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Games</title>
+    <title>Customizable Snake Game</title>
     <style>
         body {
             margin: 0;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
@@ -17,341 +17,353 @@
             padding: 20px;
         }
 
-        .game-buttons {
+        .game-container {
             display: flex;
-            gap: 20px;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        canvas {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+        }
+
+        .score {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4ecca3;
+            text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+        }
+
+        .settings {
             margin-bottom: 20px;
         }
 
+        .setting-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b8c2cc;
+        }
+
+        input[type="range"],
+        input[type="color"],
+        select {
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        input[type="color"] {
+            height: 40px;
+            padding: 2px;
+            background: none;
+            border: 2px solid #4ecca3;
+        }
+
         button {
+            width: 100%;
+            padding: 12px;
             background: #4ecca3;
             border: none;
-            padding: 10px 20px;
-            color: white;
             border-radius: 5px;
-            cursor: pointer;
+            color: white;
             font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            margin-bottom: 10px;
         }
 
         button:hover {
             background: #3db892;
+            transform: translateY(-2px);
         }
 
-        .game-container {
-            display: flex;
-            gap: 20px;
+        button:active {
+            transform: translateY(0);
         }
 
-        .info-panel {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 200px;
-        }
-
-        canvas {
-            background: #000;
+        .high-scores {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 5px;
         }
 
-        .game {
+        .high-scores h3 {
+            margin: 0 0 10px 0;
+            color: #4ecca3;
+        }
+
+        .high-scores ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .high-scores li {
+            margin-bottom: 5px;
+        }
+
+        #countdown {
+            position: absolute;
+            font-size: 100px;
+            color: #4ecca3;
+            text-shadow: 0 0 20px rgba(78, 204, 163, 0.5);
             display: none;
-        }
-
-        .game.active {
-            display: block;
-        }
-
-        .score {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="game-buttons">
-        <button onclick="showGame('tetris')" class="active">Tetris</button>
-        <button onclick="showGame('snake')">Snake</button>
-    </div>
+    <div class="game-container">
+        <canvas id="snake-board" width="800" height="800"></canvas>
+        <div class="controls-panel">
+            <div class="score">Score: <span id="score">0</span></div>
+            
+            <div class="settings">
+                <div class="setting-group">
+                    <label>Game Size</label>
+                    <select id="game-size">
+                        <option value="600">Small (600x600)</option>
+                        <option value="800" selected>Medium (800x800)</option>
+                        <option value="1000">Large (1000x1000)</option>
+                        <option value="1200">Extra Large (1200x1200)</option>
+                    </select>
+                </div>
 
-    <div id="tetris" class="game active">
-        <div class="game-container">
-            <canvas id="tetris-board" width="300" height="600"></canvas>
-            <div class="info-panel">
-                <div class="score">Score: <span id="tetris-score">0</span></div>
-                <canvas id="next-piece" width="120" height="120"></canvas>
-                <button id="start-tetris">Start Game</button>
-                <p>← → : Move</p>
-                <p>↑ : Rotate</p>
-                <p>↓ : Soft Drop</p>
-                <p>Space : Hard Drop</p>
+                <div class="setting-group">
+                    <label>Speed: <span id="speed-value">Normal</span></label>
+                    <input type="range" id="speed" min="50" max="200" value="100">
+                </div>
+
+                <div class="setting-group">
+                    <label>Snake Color</label>
+                    <input type="color" id="snake-color" value="#4ecca3">
+                </div>
+
+                <div class="setting-group">
+                    <label>Food Color</label>
+                    <input type="color" id="food-color" value="#ff6b6b">
+                </div>
+
+                <div class="setting-group">
+                    <label>Grid Size</label>
+                    <select id="grid-size">
+                        <option value="15">Large (15x15)</option>
+                        <option value="20" selected>Medium (20x20)</option>
+                        <option value="25">Small (25x25)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="start-btn">Start Game</button>
+            <button id="pause-btn">Pause</button>
+
+            <div class="high-scores">
+                <h3>High Scores</h3>
+                <ol id="high-scores-list">
+                </ol>
             </div>
         </div>
     </div>
-
-    <div id="snake" class="game">
-        <div class="game-container">
-            <canvas id="snake-board" width="400" height="400"></canvas>
-            <div class="info-panel">
-                <div class="score">Score: <span id="snake-score">0</span></div>
-                <button id="start-snake">Start Game</button>
-                <p>Use arrow keys to move</p>
-            </div>
-        </div>
-    </div>
+    <div id="countdown"></div>
 
     <script>
-        // Game switching
-        function showGame(gameId) {
-            document.querySelectorAll('.game').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(gameId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Tetris Game
-        class TetrisGame {
-            constructor() {
-                this.canvas = document.getElementById('tetris-board');
-                this.ctx = this.canvas.getContext('2d');
-                this.nextCanvas = document.getElementById('next-piece');
-                this.nextCtx = this.nextCanvas.getContext('2d');
-                this.blockSize = 30;
-                this.boardWidth = 10;
-                this.boardHeight = 20;
-                this.board = Array(this.boardHeight).fill().map(() => Array(this.boardWidth).fill(0));
-                
-                this.pieces = [
-                    [[1,1,1,1]], // I
-                    [[1,1],[1,1]], // O
-                    [[1,1,1],[0,1,0]], // T
-                    [[1,1,1],[1,0,0]], // L
-                    [[1,1,1],[0,0,1]], // J
-                    [[1,1,0],[0,1,1]], // Z
-                    [[0,1,1],[1,1,0]]  // S
-                ];
-                
-                this.colors = [
-                    null,
-                    '#FF0D72',
-                    '#0DC2FF',
-                    '#0DFF72',
-                    '#F538FF',
-                    '#FF8E0D',
-                    '#FFE138',
-                    '#3877FF'
-                ];
-
-                this.piece = null;
-                this.nextPiece = null;
-                this.score = 0;
-                this.gameOver = false;
-                this.dropCounter = 0;
-                this.lastTime = 0;
-                
-                this.initControls();
-            }
-
-            createPiece() {
-                const piece = this.pieces[Math.floor(Math.random() * this.pieces.length)];
-                return {
-                    pos: {x: 3, y: 0},
-                    matrix: piece
-                };
-            }
-
-            draw() {
-                this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.drawMatrix(this.board, {x: 0, y: 0});
-                if (this.piece) {
-                    this.drawMatrix(this.piece.matrix, this.piece.pos);
-                }
-            }
-
-            drawMatrix(matrix, offset) {
-                matrix.forEach((row, y) => {
-                    row.forEach((value, x) => {
-                        if (value !== 0) {
-                            this.ctx.fillStyle = this.colors[1];
-                            this.ctx.fillRect(
-                                (x + offset.x) * this.blockSize,
-                                (y + offset.y) * this.blockSize,
-                                this.blockSize - 1,
-                                this.blockSize - 1
-                            );
-                        }
-                    });
-                });
-            }
-
-            merge() {
-                this.piece.matrix.forEach((row, y) => {
-                    row.forEach((value, x) => {
-                        if (value !== 0) {
-                            this.board[y + this.piece.pos.y][x + this.piece.pos.x] = value;
-                        }
-                    });
-                });
-            }
-
-            collision() {
-                const matrix = this.piece.matrix;
-                const pos = this.piece.pos;
-                
-                for (let y = 0; y < matrix.length; y++) {
-                    for (let x = 0; x < matrix[y].length; x++) {
-                        if (matrix[y][x] !== 0 &&
-                            (this.board[y + pos.y] &&
-                            this.board[y + pos.y][x + pos.x]) !== 0) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-
-            drop() {
-                this.piece.pos.y++;
-                if (this.collision()) {
-                    this.piece.pos.y--;
-                    this.merge();
-                    this.piece = this.createPiece();
-                    if (this.collision()) {
-                        this.gameOver = true;
-                        alert('Game Over!');
-                        return;
-                    }
-                }
-                this.dropCounter = 0;
-            }
-
-            move(dir) {
-                this.piece.pos.x += dir;
-                if (this.collision()) {
-                    this.piece.pos.x -= dir;
-                }
-            }
-
-            rotate() {
-                const pos = this.piece.pos.x;
-                let offset = 1;
-                const matrix = this.piece.matrix;
-                this.piece.matrix = matrix[0].map((_, i) => 
-                    matrix.map(row => row[i]).reverse()
-                );
-                
-                while (this.collision()) {
-                    this.piece.pos.x += offset;
-                    offset = -(offset + (offset > 0 ? 1 : -1));
-                    if (offset > matrix[0].length) {
-                        this.piece.matrix = matrix;
-                        this.piece.pos.x = pos;
-                        return;
-                    }
-                }
-            }
-
-            initControls() {
-                document.addEventListener('keydown', event => {
-                    if (this.gameOver) return;
-
-                    switch(event.keyCode) {
-                        case 37: // Left
-                            this.move(-1);
-                            break;
-                        case 39: // Right
-                            this.move(1);
-                            break;
-                        case 40: // Down
-                            this.drop();
-                            break;
-                        case 38: // Up (rotate)
-                            this.rotate();
-                            break;
-                    }
-                });
-            }
-
-            update(time = 0) {
-                if (this.gameOver) return;
-
-                const deltaTime = time - this.lastTime;
-                this.lastTime = time;
-                this.dropCounter += deltaTime;
-
-                if (this.dropCounter > 1000) {
-                    this.drop();
-                }
-
-                this.draw();
-                requestAnimationFrame(this.update.bind(this));
-            }
-
-            start() {
-                this.board = Array(this.boardHeight).fill().map(() => Array(this.boardWidth).fill(0));
-                this.piece = this.createPiece();
-                this.score = 0;
-                this.gameOver = false;
-                this.update();
-            }
-        }
-
-        // Snake Game
         class SnakeGame {
             constructor() {
                 this.canvas = document.getElementById('snake-board');
                 this.ctx = this.canvas.getContext('2d');
-                this.blockSize = 20;
-                this.snake = [{x: 10, y: 10}];
-                this.food = null;
-                this.direction = {x: 0, y: 0};
+                this.setupControls();
+                this.highScores = JSON.parse(localStorage.getItem('snakeHighScores')) || [];
+                this.updateHighScores();
+            }
+
+            setupControls() {
+                // Game size control
+                document.getElementById('game-size').addEventListener('change', (e) => {
+                    const size = parseInt(e.target.value);
+                    this.canvas.width = size;
+                    this.canvas.height = size;
+                    if (!this.gameOver) this.reset();
+                });
+
+                // Speed control
+                document.getElementById('speed').addEventListener('input', (e) => {
+                    const speed = parseInt(e.target.value);
+                    this.speed = 200 - speed;
+                    const speedText = speed < 75 ? "Slow" : speed > 150 ? "Fast" : "Normal";
+                    document.getElementById('speed-value').textContent = speedText;
+                });
+
+                // Color controls
+                document.getElementById('snake-color').addEventListener('input', (e) => {
+                    this.snakeColor = e.target.value;
+                });
+                document.getElementById('food-color').addEventListener('input', (e) => {
+                    this.foodColor = e.target.value;
+                });
+
+                // Grid size control
+                document.getElementById('grid-size').addEventListener('change', (e) => {
+                    this.blockSize = this.canvas.width / parseInt(e.target.value);
+                    if (!this.gameOver) this.reset();
+                });
+
+                // Start button
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    this.start();
+                });
+
+                // Pause button
+                document.getElementById('pause-btn').addEventListener('click', () => {
+                    this.togglePause();
+                });
+
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    if (this.gameOver || this.paused) return;
+
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                            if (this.direction.x === 0) this.nextDirection = {x: -1, y: 0};
+                            break;
+                        case 'ArrowRight':
+                            if (this.direction.x === 0) this.nextDirection = {x: 1, y: 0};
+                            break;
+                        case 'ArrowUp':
+                            if (this.direction.y === 0) this.nextDirection = {x: 0, y: -1};
+                            break;
+                        case 'ArrowDown':
+                            if (this.direction.y === 0) this.nextDirection = {x: 0, y: 1};
+                            break;
+                        case ' ':
+                            this.togglePause();
+                            break;
+                    }
+                });
+            }
+
+            reset() {
+                const gridSize = parseInt(document.getElementById('grid-size').value);
+                this.blockSize = this.canvas.width / gridSize;
+                this.snake = [{x: 5, y: 5}];
+                this.direction = {x: 1, y: 0};
+                this.nextDirection = {x: 1, y: 0};
+                this.food = this.generateFood();
                 this.score = 0;
                 this.gameOver = false;
-                
-                this.initControls();
+                this.paused = false;
+                this.speed = 200 - parseInt(document.getElementById('speed').value);
+                this.snakeColor = document.getElementById('snake-color').value;
+                this.foodColor = document.getElementById('food-color').value;
+                document.getElementById('score').textContent = '0';
             }
 
             generateFood() {
-                const x = Math.floor(Math.random() * (this.canvas.width / this.blockSize));
-                const y = Math.floor(Math.random() * (this.canvas.height / this.blockSize));
-                this.food = {x, y};
+                const gridSize = this.canvas.width / this.blockSize;
+                let food;
+                do {
+                    food = {
+                        x: Math.floor(Math.random() * gridSize),
+                        y: Math.floor(Math.random() * gridSize)
+                    };
+                } while (this.snake.some(segment => 
+                    segment.x === food.x && segment.y === food.y));
+                return food;
             }
 
             draw() {
                 // Clear canvas
-                this.ctx.fillStyle = '#000';
+                this.ctx.fillStyle = '#1a1a2e';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // Draw snake
-                this.ctx.fillStyle = '#4ecca3';
-                this.snake.forEach(segment => {
-                    this.ctx.fillRect(
+
+                // Draw grid
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                for (let i = 0; i < this.canvas.width; i += this.blockSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(i, 0);
+                    this.ctx.lineTo(i, this.canvas.height);
+                    this.ctx.stroke();
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, i);
+                    this.ctx.lineTo(this.canvas.width, i);
+                    this.ctx.stroke();
+                }
+
+                // Draw snake with gradient
+                this.snake.forEach((segment, index) => {
+                    const gradient = this.ctx.createRadialGradient(
+                        segment.x * this.blockSize + this.blockSize/2,
+                        segment.y * this.blockSize + this.blockSize/2,
+                        0,
+                        segment.x * this.blockSize + this.blockSize/2,
+                        segment.y * this.blockSize + this.blockSize/2,
+                        this.blockSize/2
+                    );
+                    gradient.addColorStop(0, this.snakeColor);
+                    gradient.addColorStop(1, this.adjustColor(this.snakeColor, -30));
+                    this.ctx.fillStyle = gradient;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.roundRect(
                         segment.x * this.blockSize,
                         segment.y * this.blockSize,
                         this.blockSize - 1,
-                        this.blockSize - 1
-                    );
-                });
-                
-                // Draw food
-                if (this.food) {
-                    this.ctx.fillStyle = '#ff6b6b';
-                    this.ctx.fillRect(
-                        this.food.x * this.blockSize,
-                        this.food.y * this.blockSize,
                         this.blockSize - 1,
-                        this.blockSize - 1
+                        index === 0 ? this.blockSize/3 : this.blockSize/5
                     );
-                }
+                    this.ctx.fill();
+                });
+
+                // Draw food with pulsing effect
+                const pulseSize = 1 + Math.sin(Date.now() / 200) * 0.1;
+                const gradient = this.ctx.createRadialGradient(
+                    this.food.x * this.blockSize + this.blockSize/2,
+                    this.food.y * this.blockSize + this.blockSize/2,
+                    0,
+                    this.food.x * this.blockSize + this.blockSize/2,
+                    this.food.y * this.blockSize + this.blockSize/2,
+                    (this.blockSize/2) * pulseSize
+                );
+                gradient.addColorStop(0, this.foodColor);
+                gradient.addColorStop(1, this.adjustColor(this.foodColor, -30));
+                this.ctx.fillStyle = gradient;
+                
+                this.ctx.beginPath();
+                this.ctx.arc(
+                    this.food.x * this.blockSize + this.blockSize/2,
+                    this.food.y * this.blockSize + this.blockSize/2,
+                    (this.blockSize/2 - 1) * pulseSize,
+                    0,
+                    Math.PI * 2
+                );
+                this.ctx.fill();
+            }
+
+            adjustColor(color, amount) {
+                const hex = color.replace('#', '');
+                const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+                const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+                const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
             }
 
             update() {
-                if (this.gameOver) return;
+                if (this.gameOver || this.paused) return;
 
-                // Move snake
+                // Update snake position
+                this.direction = this.nextDirection;
                 const head = {
                     x: this.snake[0].x + this.direction.x,
                     y: this.snake[0].y + this.direction.y
@@ -361,71 +373,141 @@
                 if (head.x < 0 || head.x >= this.canvas.width / this.blockSize ||
                     head.y < 0 || head.y >= this.canvas.height / this.blockSize) {
                     this.gameOver = true;
-                    alert('Game Over!');
+                    this.handleGameOver();
+                    return;
+                }
+
+                // Check self collision
+                if (this.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                    this.gameOver = true;
+                    this.handleGameOver();
                     return;
                 }
 
                 this.snake.unshift(head);
 
                 // Check food collision
-                if (this.food && head.x === this.food.x && head.y === this.food.y) {
+                if (head.x === this.food.x && head.y === this.food.y) {
                     this.score += 10;
-                    document.getElementById('snake-score').textContent = this.score;
-                    this.generateFood();
+                    document.getElementById('score').textContent = this.score;
+                    this.food = this.generateFood();
+                    this.createFoodEffect();
                 } else {
                     this.snake.pop();
                 }
 
                 this.draw();
-                setTimeout(() => requestAnimationFrame(this.update.bind(this)), 100);
+                setTimeout(() => requestAnimationFrame(() => this.update()), this.speed);
             }
 
-            initControls() {
-                document.addEventListener('keydown', event => {
-                    if (this.gameOver) return;
+            createFoodEffect() {
+                const particles = [];
+                const centerX = this.food.x * this.blockSize + this.blockSize/2;
+                const centerY = this.food.y * this.blockSize + this.blockSize/2;
 
-                    switch(event.keyCode) {
-                        case 37: // Left
-                            if (this.direction.x === 0) {
-                                this.direction = {x: -1, y: 0};
-                            }
-                            break;
-                        case 38: // Up
-                            if (this.direction.y === 0) {
-                                this.direction = {x: 0, y: -1};
-                            }
-                            break;
-                        case 39: // Right
-                            if (this.direction.x === 0) {
-                                this.direction = {x: 1, y: 0};
-                            }
-                            break;
-                        case 40: // Down
-                            if (this.direction.y === 0) {
-                                this.direction = {x: 0, y: 1};
-                            }
-                            break;
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    particles.push({
+                        x: centerX,
+                        y: centerY,
+                        dx: Math.cos(angle) * 5,
+                        dy: Math.sin(angle) * 5,
+                        alpha: 1
+                    });
+                }
+
+                const animate = () => {
+                    particles.forEach(p => {
+                        p.x += p.dx;
+                        p.y += p.dy;
+                        p.alpha -= 0.05;
+
+                        if (p.alpha > 0) {
+                            this.ctx.fillStyle = `${this.foodColor}${Math.floor(p.alpha * 255).toString(16).padStart(2, '0')}`;
+                            this.ctx.beginPath();
+                            this.ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                    });
+
+                    if (particles.some(p => p.alpha > 0)) {
+                        requestAnimationFrame(animate);
                     }
+                };
+
+                animate();
+            }
+
+            handleGameOver() {
+                this.highScores.push(this.score);
+                this.highScores.sort((a, b) => b - a);
+                this.highScores = this.highScores.slice(0, 5); // Keep top 5 scores
+                localStorage.setItem('snakeHighScores', JSON.stringify(this.highScores));
+                this.updateHighScores();
+                
+                setTimeout(() => {
+                    alert(`Game Over! Score: ${this.score}`);
+                }, 100);
+            }
+
+            updateHighScores() {
+                const list = document.getElementById('high-scores-list');
+                list.innerHTML = '';
+                this.highScores.forEach(score => {
+                    const li = document.createElement('li');
+                    li.textContent = score;
+                    list.appendChild(li);
                 });
             }
 
+            togglePause() {
+                if (this.gameOver) return;
+                
+                this.paused = !this.paused;
+                document.getElementById('pause-btn').textContent = this.paused ? 'Resume' : 'Pause';
+                
+                if (!this.paused) {
+                    this.countdown();
+                }
+            }
+
+            countdown() {
+                const countdownElement = document.getElementById('countdown');
+                countdownElement.style.display = 'block';
+                let count = 3;
+                
+                const countdownInterval = setInterval(() => {
+                    if (count > 0) {
+                        countdownElement.textContent = count;
+                        count--;
+                    } else {
+                        countdownElement.style.display = 'none';
+                        clearInterval(countdownInterval);
+                        this.update();
+                    }
+                }, 1000);
+            }
+
             start() {
-                this.snake = [{x: 10, y: 10}];
-                this.direction = {x: 1, y: 0};
-                this.score = 0;
-                this.gameOver = false;
-                this.generateFood();
-                this.update();
+                this.reset();
+                this.countdown();
             }
         }
 
-        // Initialize games
-        const tetris = new TetrisGame();
-        const snake = new SnakeGame();
+        // Initialize the game
+        const game = new SnakeGame();
+        
+        // Position the countdown element in the center of the canvas
+        function positionCountdown() {
+            const countdown = document.getElementById('countdown');
+            const canvas = document.getElementById('snake-board');
+            const rect = canvas.getBoundingClientRect();
+            countdown.style.left = `${rect.left + rect.width/2 - countdown.offsetWidth/2}px`;
+            countdown.style.top = `${rect.top + rect.height/2 - countdown.offsetHeight/2}px`;
+        }
 
-        // Add start button listeners
-        document.getElementById('start-tetris').addEventListener('click', () => tetris.start());
-        document.getElementById('start-snake').addEventListener('click', () => snake.start());
+        window.addEventListener('resize', positionCountdown);
+        positionCountdown();
     </script>
 </body>
 </html>
