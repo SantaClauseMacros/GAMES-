@@ -3,29 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game</title>
+    <title>Ultimate Snake Arcade</title>
     <style>
+        :root {
+            --primary: #4ecca3;
+            --secondary: #ff6b6b;
+            --accent: #ffd700;
+            --dark: #1a1a2e;
+            --darker: #151525;
+        }
+
         body {
             margin: 0;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, var(--dark), var(--darker));
             color: white;
             font-family: Arial, sans-serif;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+        }
+
+        #gameContainer {
+            display: flex;
             gap: 20px;
             padding: 20px;
         }
 
-        .game-container {
-            display: flex;
-            gap: 20px;
+        .game-area {
+            position: relative;
         }
 
         canvas {
-            background: #000;
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #effectCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
         }
 
         .panel {
@@ -33,88 +52,243 @@
             background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            backdrop-filter: blur(5px);
         }
 
-        .score {
-            font-size: 24px;
+        .score-info {
             text-align: center;
-            color: #4ecca3;
+            margin-bottom: 20px;
+        }
+
+        .current-score {
+            font-size: 32px;
+            color: var(--primary);
             margin-bottom: 10px;
         }
 
-        .settings {
+        .high-score {
+            color: var(--accent);
+        }
+
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+        }
+
+        .power-ups {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .power-up {
+            aspect-ratio: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .power-up:hover {
+            transform: translateY(-2px);
+        }
+
+        .power-up.active {
+            background: var(--primary);
+        }
+
+        .power-up-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .minigame-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .minigame-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .settings {
+            margin-bottom: 20px;
+        }
+
+        .setting-group {
+            margin-bottom: 10px;
         }
 
         label {
-            color: #b8c2cc;
-            margin-bottom: 5px;
             display: block;
+            margin-bottom: 5px;
+            color: var(--primary);
         }
 
         select, input[type="range"] {
             width: 100%;
             padding: 5px;
-            margin-bottom: 10px;
             background: rgba(0, 0, 0, 0.2);
-            border: 1px solid #4ecca3;
+            border: 1px solid var(--primary);
             border-radius: 4px;
             color: white;
         }
 
         button {
             width: 100%;
-            padding: 10px;
-            background: #4ecca3;
+            padding: 12px;
+            background: var(--primary);
             border: none;
             border-radius: 4px;
             color: white;
             cursor: pointer;
-            margin-bottom: 5px;
-            transition: background 0.2s;
+            margin-bottom: 10px;
+            transition: all 0.3s;
         }
 
         button:hover {
             background: #3db892;
+            transform: translateY(-2px);
         }
 
         .controls {
-            margin-top: 15px;
+            margin-top: 20px;
             padding: 10px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 4px;
         }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .power-up.ready {
+            animation: pulse 1s infinite;
+        }
+
+        .achievement {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            padding: 10px 20px;
+            border-radius: 4px;
+            animation: slideIn 0.5s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <canvas id="gameCanvas"></canvas>
+    <div id="gameContainer">
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+            <canvas id="effectCanvas"></canvas>
+            <div class="minigame-overlay">
+                <div class="minigame-content">
+                    <h2 id="minigameTitle">Minigame</h2>
+                    <p id="minigameDescription"></p>
+                    <div id="minigameArea"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="panel">
-            <div class="score">Score: <span id="scoreValue">0</span></div>
-            
+            <div class="score-info">
+                <div class="current-score">Score: <span id="scoreValue">0</span></div>
+                <div class="high-score">High Score: <span id="highScoreValue">0</span></div>
+            </div>
+
+            <div class="game-modes">
+                <button class="mode-btn active" data-mode="classic">Classic</button>
+                <button class="mode-btn" data-mode="timeAttack">Time Attack</button>
+                <button class="mode-btn" data-mode="maze">Maze</button>
+                <button class="mode-btn" data-mode="portals">Portals</button>
+                <button class="mode-btn" data-mode="speed">Speed Run</button>
+                <button class="mode-btn" data-mode="chaos">Chaos</button>
+            </div>
+
+            <div class="power-ups">
+                <div class="power-up" data-power="speed">
+                    <div class="power-up-icon">⚡</div>
+                    <div>Speed</div>
+                </div>
+                <div class="power-up" data-power="ghost">
+                    <div class="power-up-icon">👻</div>
+                    <div>Ghost</div>
+                </div>
+                <div class="power-up" data-power="freeze">
+                    <div class="power-up-icon">❄️</div>
+                    <div>Freeze</div>
+                </div>
+                <div class="power-up" data-power="magnet">
+                    <div class="power-up-icon">🧲</div>
+                    <div>Magnet</div>
+                </div>
+                <div class="power-up" data-power="multiplier">
+                    <div class="power-up-icon">✨</div>
+                    <div>2x</div>
+                </div>
+                <div class="power-up" data-power="shield">
+                    <div class="power-up-icon">🛡️</div>
+                    <div>Shield</div>
+                </div>
+            </div>
+
             <div class="settings">
-                <div>
+                <div class="setting-group">
                     <label>Grid Size</label>
                     <select id="gridSize">
-                        <option value="10">10x10 (Large cells)</option>
-                        <option value="15">15x15 (Medium cells)</option>
-                        <option value="20" selected>20x20 (Small cells)</option>
-                        <option value="25">25x25 (Tiny cells)</option>
+                        <option value="10">10x10 (Large)</option>
+                        <option value="15">15x15 (Medium)</option>
+                        <option value="20" selected>20x20 (Small)</option>
+                        <option value="25">25x25 (Tiny)</option>
                     </select>
                 </div>
 
-                <div>
-                    <label>Game Speed: <span id="speedValue">Normal</span></label>
+                <div class="setting-group">
+                    <label>Speed: <span id="speedValue">Normal</span></label>
                     <input type="range" id="gameSpeed" min="50" max="200" value="100">
                 </div>
 
-                <div>
+                <div class="setting-group">
                     <label>Canvas Size</label>
                     <select id="canvasSize">
                         <option value="400">Small (400x400)</option>
@@ -131,6 +305,7 @@
                 <p>Controls:</p>
                 <p>↑↓←→ or WASD to move</p>
                 <p>Space to pause</p>
+                <p>1-6 for power-ups</p>
             </div>
         </div>
     </div>
@@ -138,78 +313,67 @@
     <script>
         class SnakeGame {
             constructor() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
+                // Canvas setup
+                this.gameCanvas = document.getElementById('gameCanvas');
+                this.effectCanvas = document.getElementById('effectCanvas');
+                this.gameCtx = this.gameCanvas.getContext('2d');
+                this.effectCtx = this.effectCanvas.getContext('2d');
+
+                // Set initial canvas size
+                this.setCanvasSize(600);
+
+                // Game state
+                this.gridSize = 20;
+                this.cellSize = this.canvasSize / this.gridSize;
+                this.score = 0;
+                this.highScore = localStorage.getItem('snakeHighScore') || 0;
+                this.speed = 150;
+                this.gameMode = 'classic';
+                this.activePowerUps = new Set();
                 
-                // Initialize game settings
-                this.setCanvasSize(600); // Default size
-                this.setGridSize(20);    // Default grid
-                this.speed = 150;        // Default speed
+                // Minigame state
+                this.minigameActive = false;
+                this.currentMinigame = null;
                 
+                // Special elements
+                this.portals = [];
+                this.mazeWalls = [];
+                this.particles = [];
+                
+                // Initialize game
+                this.setupEventListeners();
                 this.reset();
-                this.setupControls();
             }
 
             setCanvasSize(size) {
-                this.canvas.width = size;
-                this.canvas.height = size;
                 this.canvasSize = size;
-                if (this.gridSize) {
-                    this.cellSize = this.canvasSize / this.gridSize;
-                }
+                this.gameCanvas.width = size;
+                this.gameCanvas.height = size;
+                this.effectCanvas.width = size;
+                this.effectCanvas.height = size;
+                this.cellSize = size / this.gridSize;
             }
 
-            setGridSize(size) {
-                this.gridSize = size;
-                this.cellSize = this.canvasSize / this.gridSize;
-            }
+            setupEventListeners() {
+                // Mode selection
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.gameMode = btn.dataset.mode;
+                        if (!this.gameOver) this.reset();
+                    });
+                });
 
-            reset() {
-                // Initialize snake in the middle
-                const mid = Math.floor(this.gridSize / 3);
-                this.snake = [{x: mid, y: mid}];
-                this.direction = {x: 1, y: 0};
-                this.nextDirection = {x: 1, y: 0};
-                this.food = this.generateFood();
-                this.score = 0;
-                this.gameOver = false;
-                this.paused = false;
-
-                document.getElementById('scoreValue').textContent = '0';
-                document.getElementById('startButton').textContent = 'Start Game';
-            }
-
-            setupControls() {
-                // Keyboard controls
-                document.addEventListener('keydown', (e) => {
-                    if (this.gameOver) return;
-
-                    switch(e.key.toLowerCase()) {
-                        case 'arrowleft':
-                        case 'a':
-                            if (this.direction.x === 0) this.nextDirection = {x: -1, y: 0};
-                            break;
-                        case 'arrowright':
-                        case 'd':
-                            if (this.direction.x === 0) this.nextDirection = {x: 1, y: 0};
-                            break;
-                        case 'arrowup':
-                        case 'w':
-                            if (this.direction.y === 0) this.nextDirection = {x: 0, y: -1};
-                            break;
-                        case 'arrowdown':
-                        case 's':
-                            if (this.direction.y === 0) this.nextDirection = {x: 0, y: 1};
-                            break;
-                        case ' ':
-                            this.togglePause();
-                            break;
-                    }
+                // Power-up activation
+                document.querySelectorAll('.power-up').forEach((powerUp, index) => {
+                    powerUp.addEventListener('click', () => this.activatePowerUp(powerUp.dataset.power));
                 });
 
                 // Settings controls
                 document.getElementById('gridSize').addEventListener('change', (e) => {
-                    this.setGridSize(parseInt(e.target.value));
+                    this.gridSize = parseInt(e.target.value);
+                    this.cellSize = this.canvasSize / this.gridSize;
                     if (!this.gameOver) this.reset();
                 });
 
@@ -230,9 +394,130 @@
                     }
                 });
 
+                // Game controls
+                document.addEventListener('keydown', (e) => {
+                    if (this.gameOver) return;
+
+                    const key = e.key.toLowerCase();
+                    const directionMap = {
+                        'arrowleft': {x: -1, y: 0},
+                        'arrowright': {x: 1, y: 0},
+                        'arrowup': {x: 0, y: -1},
+                        'arrowdown': {x: 0, y: 1},
+                        'a': {x: -1, y: 0},
+                        'd': {x: 1, y: 0},
+                        'w': {x: 0, y: -1},
+                        's': {x: 0, y: 1},
+                        ' ': 'pause'
+                    };
+
+                    const newDirection = directionMap[key];
+                    if (newDirection === 'pause') {
+                        this.togglePause();
+                    } else if (newDirection && !this.paused) {
+                        if (this.direction.x !== -newDirection.x || this.direction.y !== -newDirection.y) {
+                            this.nextDirection = newDirection;
+                        }
+                    }
+
+                    // Power-up hotkeys (1-6)
+                    if (key >= '1' && key <= '6') {
+                        const powerUps = ['speed', 'ghost', 'freeze', 'magnet', 'multiplier', 'shield'];
+                        this.activatePowerUp(powerUps[parseInt(key) - 1]);
+                    }
+                });
+
                 // Button controls
                 document.getElementById('startButton').addEventListener('click', () => this.start());
                 document.getElementById('pauseButton').addEventListener('click', () => this.togglePause());
+            }
+
+            reset() {
+                // Clear previous game state
+                clearInterval(this.gameLoop);
+                this.gameLoop = null;
+
+                // Reset snake
+                const mid = Math.floor(this.gridSize / 3);
+                this.snake = [{x: mid, y: mid}];
+                this.direction = {x: 1, y: 0};
+                this.nextDirection = {x: 1, y: 0};
+
+                // Reset game state
+                this.score = 0;
+                this.gameOver = false;
+                this.paused = false;
+                this.activePowerUps.clear();
+                this.minigameActive = false;
+                this.currentMinigame = null;
+                this.timeLeft = 60;
+
+                // Reset special elements
+                this.portals = [];
+                this.mazeWalls = [];
+                this.particles = [];
+
+                // Generate initial elements
+                this.food = this.generateFood();
+                this.initializeGameMode();
+
+                // Update UI
+                document.getElementById('scoreValue').textContent = '0';
+                document.getElementById('highScoreValue').textContent = this.highScore;
+                document.querySelectorAll('.power-up').forEach(p => p.classList.remove('active'));
+            }
+
+            initializeGameMode() {
+                switch(this.gameMode) {
+                    case 'maze':
+                        this.generateMaze();
+                        break;
+                    case 'portals':
+                        this.generatePortals();
+                        break;
+                    case 'chaos':
+                        this.startChaosMode();
+                        break;
+                }
+            }
+
+            generateMaze() {
+                this.mazeWalls = [];
+                const wallCount = Math.floor(this.gridSize * this.gridSize * 0.15);
+                
+                for (let i = 0; i < wallCount; i++) {
+                    const wall = {
+                        x: Math.floor(Math.random() * this.gridSize),
+                        y: Math.floor(Math.random() * this.gridSize)
+                    };
+                    
+                    // Don't place walls near snake start
+                    if (Math.abs(wall.x - this.snake[0].x) > 2 || 
+                        Math.abs(wall.y - this.snake[0].y) > 2) {
+                        this.mazeWalls.push(wall);
+                    }
+                }
+            }
+
+            generatePortals() {
+                this.portals = [];
+                for (let i = 0; i < 2; i++) {
+                    const portal = {
+                        x: Math.floor(Math.random() * this.gridSize),
+                        y: Math.floor(Math.random() * this.gridSize),
+                        color: i === 0 ? '#00ffff' : '#ff00ff'
+                    };
+                    this.portals.push(portal);
+                }
+            }
+
+            startChaosMode() {
+                this.chaosInterval = setInterval(() => {
+                    if (!this.paused && !this.gameOver) {
+                        if (Math.random() < 0.3) this.food = this.generateFood();
+                        if (Math.random() < 0.2) this.generatePortals();
+                    }
+                }, 2000);
             }
 
             generateFood() {
@@ -240,133 +525,776 @@
                 do {
                     food = {
                         x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize)
+                        y: Math.floor(Math.random() * this.gridSize),
+                        type: Math.random() < 0.2 ? 'special' : 'normal'
                     };
-                } while (this.snake.some(segment => 
-                    segment.x === food.x && segment.y === food.y));
+                } while (
+                    this.snake.some(segment => segment.x === food.x && segment.y === food.y) ||
+                    this.mazeWalls.some(wall => wall.x === food.x && wall.y === food.y)
+                );
                 return food;
             }
 
             update() {
-                if (this.paused || this.gameOver) return;
+                if (this.paused || this.gameOver || this.minigameActive) return;
 
                 // Update snake position
-                const head = {
+                let newHead = {
                     x: this.snake[0].x + this.nextDirection.x,
                     y: this.snake[0].y + this.nextDirection.y
                 };
 
-                // Check wall collision
-                if (head.x < 0 || head.x >= this.gridSize || 
-                    head.y < 0 || head.y >= this.gridSize) {
-                    this.gameOver = true;
-                    this.handleGameOver();
-                    return;
+                // Handle portal transportation
+                if (this.gameMode === 'portals') {
+                    const portalIndex = this.portals.findIndex(p => 
+                        p.x === newHead.x && p.y === newHead.y);
+                    if (portalIndex !== -1) {
+                        const otherPortal = this.portals[1 - portalIndex];
+                        newHead = {
+                            x: otherPortal.x + this.nextDirection.x,
+                            y: otherPortal.y + this.nextDirection.y
+                        };
+                        this.createPortalEffect(this.portals[portalIndex], otherPortal);
+                    }
                 }
 
-                // Check self collision
-                if (this.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                    this.gameOver = true;
-                    this.handleGameOver();
-                    return;
+                // Check collisions
+                if (this.checkCollision(newHead)) {
+                    if (!this.activePowerUps.has('ghost')) {
+                        this.handleGameOver();
+                        return;
+                    }
                 }
 
                 // Add new head
-                this.snake.unshift(head);
+                this.snake.unshift(newHead);
 
                 // Check food collision
-                if (head.x === this.food.x && head.y === this.food.y) {
-                    this.score += 10;
-                    document.getElementById('scoreValue').textContent = this.score;
-                    this.food = this.generateFood();
+                if (this.checkFoodCollision(newHead)) {
+                    this.handleFoodCollection();
                 } else {
                     this.snake.pop();
+                }
+
+                // Update particles
+                this.updateParticles();
+
+                // Check for minigame trigger
+                if (this.score > 0 && this.score % 50 === 0) {
+                    this.startRandomMinigame();
                 }
 
                 this.direction = {...this.nextDirection};
                 this.draw();
             }
 
-            draw() {
-                // Clear canvas
-                this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Draw grid
-                this.ctx.strokeStyle = '#333';
-                this.ctx.lineWidth = 1;
-                for (let i = 0; i <= this.gridSize; i++) {
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(i * this.cellSize, 0);
-                    this.ctx.lineTo(i * this.cellSize, this.canvas.height);
-                    this.ctx.stroke();
-                    
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(0, i * this.cellSize);
-                    this.ctx.lineTo(this.canvas.width, i * this.cellSize);
-                    this.ctx.stroke();
+            checkCollision(head) {
+                // Wall collision
+                if (head.x < 0 || head.x >= this.gridSize || 
+                    head.y < 0 || head.y >= this.gridSize) {
+                    return true;
                 }
 
-                // Draw snake
-                this.snake.forEach((segment, index) => {
-                    this.ctx.fillStyle = index === 0 ? '#4ecca3' : '#3db892';
-                    this.ctx.fillRect(
-                        segment.x * this.cellSize + 1,
-                        segment.y * this.cellSize + 1,
-                        this.cellSize - 2,
-                        this.cellSize - 2
-                    );
+                // Maze wall collision
+                if (this.gameMode === 'maze' && 
+                    this.mazeWalls.some(wall => wall.x === head.x && wall.y === head.y)) {
+                    return true;
+                }
+
+                // Self collision
+                return this.snake.some(segment => segment.x === head.x && segment.y === head.y);
+            }
+
+            handleFoodCollection() {
+                let points = this.food.type === 'special' ? 20 : 10;
+                if (this.activePowerUps.has('multiplier')) points *= 2;
+                
+                this.score += points;
+                if (this.score > this.highScore) {
+                    this.highScore = this.score;
+                    localStorage.setItem('snakeHighScore', this.highScore);
+                }
+                
+                document.getElementById('scoreValue').textContent = this.score;
+                document.getElementById('highScoreValue').textContent = this.highScore;
+
+                this.createFoodEffect();
+                this.food = this.generateFood();
+
+                // Speed up slightly in speed mode
+                if (this.gameMode === 'speed') {
+                    this.speed = Math.max(50, this.speed - 2);
+                    if (this.gameLoop) {
+                        clearInterval(this.gameLoop);
+                        this.gameLoop = setInterval(() => this.update(), this.speed);
+                    }
+                }
+            }
+
+            createFoodEffect() {
+                const x = this.food.x * this.cellSize + this.cellSize/2;
+                const y = this.food.y * this.cellSize + this.cellSize/2;
+                
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * 3,
+                        vy: Math.sin(angle) * 3,
+                        life: 1,
+                        color: this.food.type === 'special' ? '#ffd700' : '#ff6b6b'
+                    });
+                }
+            }
+
+            updateParticles() {
+                this.particles = this.particles.filter(particle => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    particle.life -= 0.02;
+                    return particle.life > 0;
                 });
-
-                // Draw food
-                this.ctx.fillStyle = '#ff6b6b';
-                this.ctx.beginPath();
-                this.ctx.arc(
-                    (this.food.x + 0.5) * this.cellSize,
-                    (this.food.y + 0.5) * this.cellSize,
-                    this.cellSize / 2 - 2,
-                    0,
-                    Math.PI * 2
-                );
-                this.ctx.fill();
             }
 
-            start() {
-                this.reset();
-                if (this.gameLoop) {
-                    clearInterval(this.gameLoop);
+            createPortalEffect(from, to) {
+                // Add particles between portals
+                const steps = 10;
+                for (let i = 0; i < steps; i++) {
+                    const t = i / steps;
+                    this.particles.push({
+                        x: from.x * this.cellSize + (to.x - from.x) * this.cellSize * t,
+                        y: from.y * this.cellSize + (to.y - from.y) * this.cellSize * t,
+                        vx: 0,
+                        vy: 0,
+                        life: 0.5,
+                        color: '#ffffff'
+                    });
                 }
-                this.gameLoop = setInterval(() => this.update(), this.speed);
-                document.getElementById('startButton').textContent = 'Restart';
             }
 
-            togglePause() {
-                if (this.gameOver) return;
+            startRandomMinigame() {
+                this.minigameActive = true;
+                this.paused = true;
                 
-                this.paused = !this.paused;
-                document.getElementById('pauseButton').textContent = this.paused ? 'Resume' : 'Pause';
+                const minigames = [
+                    this.startMemoryGame.bind(this),
+                    this.startReactionGame.bind(this),
+                    this.startMazeGame.bind(this),
+                    this.startCollectGame.bind(this)
+                ];
+
+                const selectedMinigame = minigames[Math.floor(Math.random() * minigames.length)];
+                selectedMinigame();
             }
 
-            handleGameOver() {
-                clearInterval(this.gameLoop);
-                this.gameLoop = null;
+            startMemoryGame() {
+                const overlay = document.querySelector('.minigame-overlay');
+                const content = document.querySelector('.minigame-content');
+                overlay.style.display = 'flex';
                 
-                // Draw game over text
-                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.ctx.fillStyle = '#fff';
-                this.ctx.font = '48px Arial';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Game Over!', this.canvas.width/2, this.canvas.height/2);
-                
-                this.ctx.font = '24px Arial';
-                this.ctx.fillText(`Score: ${this.score}`, this.canvas.width/2, this.canvas.height/2 + 40);
-            }
-        }
+                const sequence = Array.from({length: 5}, () => Math.floor(Math.random() * 4));
+                const directions = ['⬆️', '⬇️', '⬅️', '➡️'];
+                let playerSequence = [];
+                let currentIndex = 0;
 
-        // Initialize game
-        const game = new SnakeGame();
-    </script>
-</body>
-</html>
+                content.innerHTML = `
+                    <h2>Memory Game</h2>
+                    <p>Remember the sequence!</p>
+                    <div id="sequence" style="font-size: 48px;"></div>
+                    <div id="controls" style="display: none;">
+                        ${directions.map((dir, i) => `
+                            <button onclick="window.handleMinigameInput(${i})"
+                                style="font-size: 24px; margin: 5px;">
+                                ${dir}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                const showSequence = () => {
+                    if (currentIndex < sequence.length) {
+                        document.getElementById('sequence').textContent = 
+                            directions[sequence[currentIndex]];
+                        currentIndex++;
+                        setTimeout(showSequence, 1000);
+                    } else {
+                        document.getElementById('sequence').textContent = '';
+                        document.getElementById('controls').style.display = 'block';
+                    }
+                };
+
+                window.handleMinigameInput = (input) => {
+                    playerSequence.push(input);
+                    if (playerSequence[playerSequence.length - 1] !== 
+                        sequence[playerSequence.length - 1]) {
+                        this.endMinigame(false);
+                    } else if (playerSequence.length === sequence.length) {
+                        this.endMinigame(true);
+                    }
+                };
+
+                showSequence();
+            }
+
+            startReactionGame() {
+                const overlay = document.querySelector('.minigame-overlay');
+                const content = document.querySelector('.minigame-content');
+                overlay.style.display = 'flex';
+
+                content.innerHTML = `
+                    <h2>Reaction Game</h2>
+                    <p>Click when the circle turns green!</p>
+                    <div id="target" style="
+                        width: 100px;
+                        height: 100px;
+                        background: red;
+                        border-radius: 50%;
+                        margin: 20px auto;
+                        cursor: pointer;
+                    "></div>
+                `;
+
+                const target = document.getElementById('target');
+                let startTime;
+                let hasClicked = false;
+
+                setTimeout(() => {
+                    if (!hasClicked) {
+                        target.style.background = 'green';
+                        startTime = Date.now();
+                    }
+                }, 1000 + Math.random() * 2000);
+
+                target.onclick = () => {
+                    if (!hasClicked) {
+                        hasClicked = true;
+                        if (!startTime) {
+                            this.endMinigame(false);
+                        } else {
+                            const reactionTime = Date.now() - startTime;
+                            this.endMinigame(reactionTime < 500);
+                        }
+                    }
+                };
+            }
+
+            startMazeGame() {
+                // Implement maze escape minigame
+                // (Similar structure to other minigames)
+            }
+
+            startCollectGame() {
+                // Implement collection minigame
+                // (Similar structure to other minigames)
+            }
+
+            endMinigame(success) {
+                this.minigameActive = false;
+                this.paused = false;
+                document.querySelector('.minigame-overlay').style.display = 'none';
+
+                if (success) {
+                    this.score += 50;
+                    document.getElementById('scoreValue').textContent = this.score;
+                    this.activatePowerUp('multiplier');
+                }
+            }
+
+            activatePowerUp(type) {
+                if (this.paused || this.gameOver) return;
+
+                const powerUp = document.querySelector(`.power-up[data-power="${type}"]`);
+                if (powerUp.classList.contains('active')) return;
+
+                this.activePowerUps.add(type);
+                powerUp.classList.add('active');
+
+                // Apply power-up effects
+                switch(type) {
+                    case 'speed':
+                        this.speed /= 2;
+                        if (this.gameLoop) {
+                            clearInterval(this.gameLoop);
+                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                        }
+                        break;
+                    case 'freeze':
+                        this.speed *= 2;
+                        if (this.gameLoop) {
+                            clearInterval(this.gameLoop);
+                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                        }
+                        break;
+                    case 'magnet':
+                        // Implement food attraction
+                        break;
+                }
+
+                // Remove power-up after duration
+                setTimeout(() => {
+                    this.activePowerUps.delete(type);
+                    powerUp.classList.remove('active');
+                    
+                    if (type === 'speed' || type === 'freeze') {
+                        this.speed = 150;
+                        if (this.gameLoop) {
+                            clearInterval(this.gameLoop);
+                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                        }
+                    }
+                }, 10000);
+            }
+
+            draw() {
+                // Clear canvases
+                this.gameCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+                this.effectCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+
+                // Draw background
+                this.gameCtx.fillStyle = '#000';
+                this.gameCtx.fillRect(0, 0, this.canvasSize, this.canvasSize);
+
+                // Draw maze walls
+                if (this.gameMode === 'maze') {
+                    this.gameCtx.fillStyle = '#666';
+                    this.mazeWalls.forEach(wall => {
+                        this.gameCtx.fillRect(
+                            wall.x * this.cellSize,
+                            wall.y * this.cellSize,
+                            this.cellSize - 1,
+                            this.cellSize - 1
+                        );
+                    });
+                }
+
+                // Draw portals
+                if (this.gameMode === 'portals') {
+                    this.portals.forEach(portal => {
+                        const gradient = this.gameCtx.createRadialGradient(
+                            this.activePowerUps.clear();
+                this.minigameActive = false;
+                this.currentMinigame = null;
+                this.timeLeft = 60;
+
+                // Reset special elements
+                this.portals = [];
+                this.mazeWalls = [];
+                this.particles = [];
+
+                // Generate initial elements
+                this.food = this.generateFood();
+                this.initializeGameMode();
+
+                // Update UI
+                document.getElementById('scoreValue').textContent = '0';
+                document.getElementById('highScoreValue').textContent = this.highScore;
+                document.querySelectorAll('.power-up').forEach(p => p.classList.remove('active'));
+            }
+
+            initializeGameMode() {
+                switch(this.gameMode) {
+                    case 'maze':
+                        this.generateMaze();
+                        break;
+                    case 'portals':
+                        this.generatePortals();
+                        break;
+                    case 'chaos':
+                        this.startChaosMode();
+                        break;
+                }
+            }
+
+            generateMaze() {
+                this.mazeWalls = [];
+                const wallCount = Math.floor(this.gridSize * this.gridSize * 0.15);
+                
+                for (let i = 0; i < wallCount; i++) {
+                    const wall = {
+                        x: Math.floor(Math.random() * this.gridSize),
+                        y: Math.floor(Math.random() * this.gridSize)
+                    };
+                    
+                    // Don't place walls near snake start
+                    if (Math.abs(wall.x - this.snake[0].x) > 2 || 
+                        Math.abs(wall.y - this.snake[0].y) > 2) {
+                        this.mazeWalls.push(wall);
+                    }
+                }
+            }
+
+            generatePortals() {
+                this.portals = [];
+                for (let i = 0; i < 2; i++) {
+                    const portal = {
+                        x: Math.floor(Math.random() * this.gridSize),
+                        y: Math.floor(Math.random() * this.gridSize),
+                        color: i === 0 ? '#00ffff' : '#ff00ff'
+                    };
+                    this.portals.push(portal);
+                }
+            }
+
+            startChaosMode() {
+                this.chaosInterval = setInterval(() => {
+                    if (!this.paused && !this.gameOver) {
+                        if (Math.random() < 0.3) this.food = this.generateFood();
+                        if (Math.random() < 0.2) this.generatePortals();
+                    }
+                }, 2000);
+            }
+
+            generateFood() {
+                let food;
+                do {
+                    food = {
+                        x: Math.floor(Math.random() * this.gridSize),
+                        y: Math.floor(Math.random() * this.gridSize),
+                        type: Math.random() < 0.2 ? 'special' : 'normal'
+                    };
+                } while (
+                    this.snake.some(segment => segment.x === food.x && segment.y === food.y) ||
+                    this.mazeWalls.some(wall => wall.x === food.x && wall.y === food.y)
+                );
+                return food;
+            }
+
+            update() {
+                if (this.paused || this.gameOver || this.minigameActive) return;
+
+                // Update snake position
+                let newHead = {
+                    x: this.snake[0].x + this.nextDirection.x,
+                    y: this.snake[0].y + this.nextDirection.y
+                };
+
+                // Handle portal transportation
+                if (this.gameMode === 'portals') {
+                    const portalIndex = this.portals.findIndex(p => 
+                        p.x === newHead.x && p.y === newHead.y);
+                    if (portalIndex !== -1) {
+                        const otherPortal = this.portals[1 - portalIndex];
+                        newHead = {
+                            x: otherPortal.x + this.nextDirection.x,
+                            y: otherPortal.y + this.nextDirection.y
+                        };
+                        this.createPortalEffect(this.portals[portalIndex], otherPortal);
+                    }
+                }
+
+                // Check collisions
+                if (this.checkCollision(newHead)) {
+                    if (!this.activePowerUps.has('ghost')) {
+                        this.handleGameOver();
+                        return;
+                    }
+                }
+
+                // Add new head
+                this.snake.unshift(newHead);
+
+                // Check food collision
+                if (this.checkFoodCollision(newHead)) {
+                    this.handleFoodCollection();
+                } else {
+                    this.snake.pop();
+                }
+
+                // Update particles
+                this.updateParticles();
+
+                // Check for minigame trigger
+                if (this.score > 0 && this.score % 50 === 0) {
+                    this.startRandomMinigame();
+                }
+
+                this.direction = {...this.nextDirection};
+                this.draw();
+            }
+
+            checkCollision(head) {
+                // Wall collision
+                if (head.x < 0 || head.x >= this.gridSize || 
+                    head.y < 0 || head.y >= this.gridSize) {
+                    return true;
+                }
+
+                // Maze wall collision
+                if (this.gameMode === 'maze' && 
+                    this.mazeWalls.some(wall => wall.x === head.x && wall.y === head.y)) {
+                    return true;
+                }
+
+                // Self collision
+                return this.snake.some(segment => segment.x === head.x && segment.y === head.y);
+            }
+
+            handleFoodCollection() {
+                let points = this.food.type === 'special' ? 20 : 10;
+                if (this.activePowerUps.has('multiplier')) points *= 2;
+                
+                this.score += points;
+                if (this.score > this.highScore) {
+                    this.highScore = this.score;
+                    localStorage.setItem('snakeHighScore', this.highScore);
+                }
+                
+                document.getElementById('scoreValue').textContent = this.score;
+                document.getElementById('highScoreValue').textContent = this.highScore;
+
+                this.createFoodEffect();
+                this.food = this.generateFood();
+
+                // Speed up slightly in speed mode
+                if (this.gameMode === 'speed') {
+                    this.speed = Math.max(50, this.speed - 2);
+                    if (this.gameLoop) {
+                        clearInterval(this.gameLoop);
+                        this.gameLoop = setInterval(() => this.update(), this.speed);
+                    }
+                }
+            }
+
+            createFoodEffect() {
+                const x = this.food.x * this.cellSize + this.cellSize/2;
+                const y = this.food.y * this.cellSize + this.cellSize/2;
+                
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * 3,
+                        vy: Math.sin(angle) * 3,
+                        life: 1,
+                        color: this.food.type === 'special' ? '#ffd700' : '#ff6b6b'
+                    });
+                }
+            }
+
+            updateParticles() {
+                this.particles = this.particles.filter(particle => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    particle.life -= 0.02;
+                    return particle.life > 0;
+                });
+            }
+
+            createPortalEffect(from, to) {
+                // Add particles between portals
+                const steps = 10;
+                for (let i = 0; i < steps; i++) {
+                    const t = i / steps;
+                    this.particles.push({
+                        x: from.x * this.cellSize + (to.x - from.x) * this.cellSize * t,
+                        y: from.y * this.cellSize + (to.y - from.y) * this.cellSize * t,
+                        vx: 0,
+                        vy: 0,
+                        life: 0.5,
+                        color: '#ffffff'
+                    });
+                }
+            }
+
+            startRandomMinigame() {
+                this.minigameActive = true;
+                this.paused = true;
+                
+                const minigames = [
+                    this.startMemoryGame.bind(this),
+                    this.startReactionGame.bind(this),
+                    this.startMazeGame.bind(this),
+                    this.startCollectGame.bind(this)
+                ];
+
+                const selectedMinigame = minigames[Math.floor(Math.random() * minigames.length)];
+                selectedMinigame();
+            }
+
+            startMemoryGame() {
+                const overlay = document.querySelector('.minigame-overlay');
+                const content = document.querySelector('.minigame-content');
+                overlay.style.display = 'flex';
+                
+                const sequence = Array.from({length: 5}, () => Math.floor(Math.random() * 4));
+                const directions = ['⬆️', '⬇️', '⬅️', '➡️'];
+                let playerSequence = [];
+                let currentIndex = 0;
+
+                content.innerHTML = `
+                    <h2>Memory Game</h2>
+                    <p>Remember the sequence!</p>
+                    <div id="sequence" style="font-size: 48px;"></div>
+                    <div id="controls" style="display: none;">
+                        ${directions.map((dir, i) => `
+                            <button onclick="window.handleMinigameInput(${i})"
+                                style="font-size: 24px; margin: 5px;">
+                                ${dir}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                const showSequence = () => {
+                    if (currentIndex < sequence.length) {
+                        document.getElementById('sequence').textContent = 
+                            directions[sequence[currentIndex]];
+                        currentIndex++;
+                        setTimeout(showSequence, 1000);
+                    } else {
+                        document.getElementById('sequence').textContent = '';
+                        document.getElementById('controls').style.display = 'block';
+                    }
+                };
+
+                window.handleMinigameInput = (input) => {
+                    playerSequence.push(input);
+                    if (playerSequence[playerSequence.length - 1] !== 
+                        sequence[playerSequence.length - 1]) {
+                        this.endMinigame(false);
+                    } else if (playerSequence.length === sequence.length) {
+                        this.endMinigame(true);
+                    }
+                };
+
+                showSequence();
+            }
+
+            startReactionGame() {
+                const overlay = document.querySelector('.minigame-overlay');
+                const content = document.querySelector('.minigame-content');
+                overlay.style.display = 'flex';
+
+                content.innerHTML = `
+                    <h2>Reaction Game</h2>
+                    <p>Click when the circle turns green!</p>
+                    <div id="target" style="
+                        width: 100px;
+                        height: 100px;
+                        background: red;
+                        border-radius: 50%;
+                        margin: 20px auto;
+                        cursor: pointer;
+                    "></div>
+                `;
+
+                const target = document.getElementById('target');
+                let startTime;
+                let hasClicked = false;
+
+                setTimeout(() => {
+                    if (!hasClicked) {
+                        target.style.background = 'green';
+                        startTime = Date.now();
+                    }
+                }, 1000 + Math.random() * 2000);
+
+                target.onclick = () => {
+                    if (!hasClicked) {
+                        hasClicked = true;
+                        if (!startTime) {
+                            this.endMinigame(false);
+                        } else {
+                            const reactionTime = Date.now() - startTime;
+                            this.endMinigame(reactionTime < 500);
+                        }
+                    }
+                };
+            }
+
+            startMazeGame() {
+                // Implement maze escape minigame
+                // (Similar structure to other minigames)
+            }
+
+            startCollectGame() {
+                // Implement collection minigame
+                // (Similar structure to other minigames)
+            }
+
+            endMinigame(success) {
+                this.minigameActive = false;
+                this.paused = false;
+                document.querySelector('.minigame-overlay').style.display = 'none';
+
+                if (success) {
+                    this.score += 50;
+                    document.getElementById('scoreValue').textContent = this.score;
+                    this.activatePowerUp('multiplier');
+                }
+            }
+
+            activatePowerUp(type) {
+                if (this.paused || this.gameOver) return;
+
+                const powerUp = document.querySelector(`.power-up[data-power="${type}"]`);
+                if (powerUp.classList.contains('active')) return;
+
+                this.activePowerUps.add(type);
+                powerUp.classList.add('active');
+
+                // Apply power-up effects
+                switch(type) {
+                    case 'speed':
+                        this.speed /= 2;
+                        if (this.gameLoop) {
+                            clearInterval(this.gameLoop);
+                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                        }
+                        break;
+                    case 'freeze':
+                        this.speed *= 2;
+                        if (this.gameLoop) {
+                            clearInterval(this.gameLoop);
+                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                        }
+                        break;
+                    case 'magnet':
+                        // Implement food attraction
+                        break;
+                }
+
+                // Remove power-up after duration
+                setTimeout(() => {
+                    this.activePowerUps.delete(type);
+                    powerUp.classList.remove('active');
+                    
+                    if (type === 'speed' || type === 'freeze') {
+                        this.speed = 150;
+                        if (this.gameLoop) {
+                            clearInterval(this.gameLoop);
+                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                        }
+                    }
+                }, 10000);
+            }
+
+            draw() {
+                // Clear canvases
+                this.gameCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+                this.effectCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+
+                // Draw background
+                this.gameCtx.fillStyle = '#000';
+                this.gameCtx.fillRect(0, 0, this.canvasSize, this.canvasSize);
+
+                // Draw maze walls
+                if (this.gameMode === 'maze') {
+                    this.gameCtx.fillStyle = '#666';
+                    this.mazeWalls.forEach(wall => {
+                        this.gameCtx.fillRect(
+                            wall.x * this.cellSize,
+                            wall.y * this.cellSize,
+                            this.cellSize - 1,
+                            this.cellSize - 1
+                        );
+                    });
+                }
+
+                // Draw portals
+                if (this.gameMode === 'portals') {
+                    this.portals.forEach(portal => {
+                        const gradient = this.gameCtx.createRadialGradient(
+                            portal.x * this.cellSize + this.
