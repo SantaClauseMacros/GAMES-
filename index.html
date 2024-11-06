@@ -22,12 +22,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         #gameContainer {
             display: flex;
             gap: 20px;
-            padding: 20px;
         }
 
         .game-area {
@@ -40,7 +40,7 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
         }
 
-        #effectCanvas {
+        #uiCanvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -55,22 +55,14 @@
             backdrop-filter: blur(5px);
         }
 
-        .score-info {
+        .score {
+            font-size: 32px;
             text-align: center;
+            color: var(--primary);
             margin-bottom: 20px;
         }
 
-        .current-score {
-            font-size: 32px;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .high-score {
-            color: var(--accent);
-        }
-
-        .game-modes {
+        .modes {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
@@ -84,7 +76,6 @@
             border-radius: 4px;
             color: white;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
         .mode-btn.active {
@@ -107,11 +98,6 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .power-up:hover {
-            transform: translateY(-2px);
         }
 
         .power-up.active {
@@ -121,26 +107,6 @@
         .power-up-icon {
             font-size: 24px;
             margin-bottom: 5px;
-        }
-
-        .minigame-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-        }
-
-        .minigame-content {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
         }
 
         .settings {
@@ -175,12 +141,30 @@
             color: white;
             cursor: pointer;
             margin-bottom: 10px;
-            transition: all 0.3s;
         }
 
         button:hover {
             background: #3db892;
-            transform: translateY(-2px);
+        }
+
+        .minigame-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .minigame-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
         }
 
         .controls {
@@ -189,60 +173,28 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 4px;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .power-up.ready {
-            animation: pulse 1s infinite;
-        }
-
-        .achievement {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--primary);
-            padding: 10px 20px;
-            border-radius: 4px;
-            animation: slideIn 0.5s forwards;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <div class="game-area">
             <canvas id="gameCanvas"></canvas>
-            <canvas id="effectCanvas"></canvas>
+            <canvas id="uiCanvas"></canvas>
             <div class="minigame-overlay">
-                <div class="minigame-content">
-                    <h2 id="minigameTitle">Minigame</h2>
-                    <p id="minigameDescription"></p>
-                    <div id="minigameArea"></div>
-                </div>
+                <div class="minigame-content"></div>
             </div>
         </div>
 
         <div class="panel">
-            <div class="score-info">
-                <div class="current-score">Score: <span id="scoreValue">0</span></div>
-                <div class="high-score">High Score: <span id="highScoreValue">0</span></div>
-            </div>
-
-            <div class="game-modes">
+            <div class="score">Score: <span id="scoreValue">0</span></div>
+            
+            <div class="modes">
                 <button class="mode-btn active" data-mode="classic">Classic</button>
                 <button class="mode-btn" data-mode="timeAttack">Time Attack</button>
+                <button class="mode-btn" data-mode="portal">Portal</button>
                 <button class="mode-btn" data-mode="maze">Maze</button>
-                <button class="mode-btn" data-mode="portals">Portals</button>
                 <button class="mode-btn" data-mode="speed">Speed Run</button>
-                <button class="mode-btn" data-mode="chaos">Chaos</button>
+                <button class="mode-btn" data-mode="rainbow">Rainbow</button>
             </div>
 
             <div class="power-ups">
@@ -254,21 +206,21 @@
                     <div class="power-up-icon">👻</div>
                     <div>Ghost</div>
                 </div>
-                <div class="power-up" data-power="freeze">
-                    <div class="power-up-icon">❄️</div>
-                    <div>Freeze</div>
+                <div class="power-up" data-power="shield">
+                    <div class="power-up-icon">🛡️</div>
+                    <div>Shield</div>
                 </div>
                 <div class="power-up" data-power="magnet">
                     <div class="power-up-icon">🧲</div>
                     <div>Magnet</div>
                 </div>
-                <div class="power-up" data-power="multiplier">
+                <div class="power-up" data-power="double">
                     <div class="power-up-icon">✨</div>
-                    <div>2x</div>
+                    <div>2x Points</div>
                 </div>
-                <div class="power-up" data-power="shield">
-                    <div class="power-up-icon">🛡️</div>
-                    <div>Shield</div>
+                <div class="power-up" data-power="size">
+                    <div class="power-up-icon">📏</div>
+                    <div>Size</div>
                 </div>
             </div>
 
@@ -287,15 +239,6 @@
                     <label>Speed: <span id="speedValue">Normal</span></label>
                     <input type="range" id="gameSpeed" min="50" max="200" value="100">
                 </div>
-
-                <div class="setting-group">
-                    <label>Canvas Size</label>
-                    <select id="canvasSize">
-                        <option value="400">Small (400x400)</option>
-                        <option value="600" selected>Medium (600x600)</option>
-                        <option value="800">Large (800x800)</option>
-                    </select>
-                </div>
             </div>
 
             <button id="startButton">Start Game</button>
@@ -313,35 +256,24 @@
     <script>
         class SnakeGame {
             constructor() {
-                // Canvas setup
                 this.gameCanvas = document.getElementById('gameCanvas');
-                this.effectCanvas = document.getElementById('effectCanvas');
+                this.uiCanvas = document.getElementById('uiCanvas');
                 this.gameCtx = this.gameCanvas.getContext('2d');
-                this.effectCtx = this.effectCanvas.getContext('2d');
+                this.uiCtx = this.uiCanvas.getContext('2d');
 
-                // Set initial canvas size
+                // Set canvas sizes
                 this.setCanvasSize(600);
 
                 // Game state
                 this.gridSize = 20;
                 this.cellSize = this.canvasSize / this.gridSize;
                 this.score = 0;
-                this.highScore = localStorage.getItem('snakeHighScore') || 0;
                 this.speed = 150;
                 this.gameMode = 'classic';
                 this.activePowerUps = new Set();
-                
-                // Minigame state
-                this.minigameActive = false;
-                this.currentMinigame = null;
-                
-                // Special elements
-                this.portals = [];
-                this.mazeWalls = [];
-                this.particles = [];
-                
+
                 // Initialize game
-                this.setupEventListeners();
+                this.setupControls();
                 this.reset();
             }
 
@@ -349,16 +281,17 @@
                 this.canvasSize = size;
                 this.gameCanvas.width = size;
                 this.gameCanvas.height = size;
-                this.effectCanvas.width = size;
-                this.effectCanvas.height = size;
+                this.uiCanvas.width = size;
+                this.uiCanvas.height = size;
                 this.cellSize = size / this.gridSize;
             }
 
-            setupEventListeners() {
+            setupControls() {
                 // Mode selection
                 document.querySelectorAll('.mode-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('.mode-btn').forEach(b => 
+                            b.classList.remove('active'));
                         btn.classList.add('active');
                         this.gameMode = btn.dataset.mode;
                         if (!this.gameOver) this.reset();
@@ -366,19 +299,16 @@
                 });
 
                 // Power-up activation
-                document.querySelectorAll('.power-up').forEach((powerUp, index) => {
-                    powerUp.addEventListener('click', () => this.activatePowerUp(powerUp.dataset.power));
+                document.querySelectorAll('.power-up').forEach(powerUp => {
+                    powerUp.addEventListener('click', () => {
+                        this.activatePowerUp(powerUp.dataset.power);
+                    });
                 });
 
                 // Settings controls
                 document.getElementById('gridSize').addEventListener('change', (e) => {
                     this.gridSize = parseInt(e.target.value);
                     this.cellSize = this.canvasSize / this.gridSize;
-                    if (!this.gameOver) this.reset();
-                });
-
-                document.getElementById('canvasSize').addEventListener('change', (e) => {
-                    this.setCanvasSize(parseInt(e.target.value));
                     if (!this.gameOver) this.reset();
                 });
 
@@ -411,113 +341,56 @@
                         ' ': 'pause'
                     };
 
-                    const newDirection = directionMap[key];
-                    if (newDirection === 'pause') {
+                    if (directionMap[key] === 'pause') {
                         this.togglePause();
-                    } else if (newDirection && !this.paused) {
-                        if (this.direction.x !== -newDirection.x || this.direction.y !== -newDirection.y) {
-                            this.nextDirection = newDirection;
+                    } else if (directionMap[key] && !this.paused) {
+                        const newDir = directionMap[key];
+                        if (this.direction.x !== -newDir.x || this.direction.y !== -newDir.y) {
+                            this.nextDirection = newDir;
                         }
                     }
 
                     // Power-up hotkeys (1-6)
                     if (key >= '1' && key <= '6') {
-                        const powerUps = ['speed', 'ghost', 'freeze', 'magnet', 'multiplier', 'shield'];
+                        const powerUps = ['speed', 'ghost', 'shield', 'magnet', 'double', 'size'];
                         this.activatePowerUp(powerUps[parseInt(key) - 1]);
                     }
                 });
 
                 // Button controls
-                document.getElementById('startButton').addEventListener('click', () => this.start());
-                document.getElementById('pauseButton').addEventListener('click', () => this.togglePause());
+                document.getElementById('startButton').addEventListener('click', () => 
+                    this.start());
+                document.getElementById('pauseButton').addEventListener('click', () => 
+                    this.togglePause());
             }
 
             reset() {
-                // Clear previous game state
                 clearInterval(this.gameLoop);
-                this.gameLoop = null;
-
+                
                 // Reset snake
                 const mid = Math.floor(this.gridSize / 3);
                 this.snake = [{x: mid, y: mid}];
                 this.direction = {x: 1, y: 0};
                 this.nextDirection = {x: 1, y: 0};
-
+                
                 // Reset game state
                 this.score = 0;
                 this.gameOver = false;
                 this.paused = false;
                 this.activePowerUps.clear();
-                this.minigameActive = false;
-                this.currentMinigame = null;
-                this.timeLeft = 60;
-
-                // Reset special elements
+                
+                // Reset mode-specific elements
                 this.portals = [];
                 this.mazeWalls = [];
-                this.particles = [];
-
+                
                 // Generate initial elements
                 this.food = this.generateFood();
                 this.initializeGameMode();
-
+                
                 // Update UI
                 document.getElementById('scoreValue').textContent = '0';
-                document.getElementById('highScoreValue').textContent = this.highScore;
-                document.querySelectorAll('.power-up').forEach(p => p.classList.remove('active'));
-            }
-
-            initializeGameMode() {
-                switch(this.gameMode) {
-                    case 'maze':
-                        this.generateMaze();
-                        break;
-                    case 'portals':
-                        this.generatePortals();
-                        break;
-                    case 'chaos':
-                        this.startChaosMode();
-                        break;
-                }
-            }
-
-            generateMaze() {
-                this.mazeWalls = [];
-                const wallCount = Math.floor(this.gridSize * this.gridSize * 0.15);
-                
-                for (let i = 0; i < wallCount; i++) {
-                    const wall = {
-                        x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize)
-                    };
-                    
-                    // Don't place walls near snake start
-                    if (Math.abs(wall.x - this.snake[0].x) > 2 || 
-                        Math.abs(wall.y - this.snake[0].y) > 2) {
-                        this.mazeWalls.push(wall);
-                    }
-                }
-            }
-
-            generatePortals() {
-                this.portals = [];
-                for (let i = 0; i < 2; i++) {
-                    const portal = {
-                        x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize),
-                        color: i === 0 ? '#00ffff' : '#ff00ff'
-                    };
-                    this.portals.push(portal);
-                }
-            }
-
-            startChaosMode() {
-                this.chaosInterval = setInterval(() => {
-                    if (!this.paused && !this.gameOver) {
-                        if (Math.random() < 0.3) this.food = this.generateFood();
-                        if (Math.random() < 0.2) this.generatePortals();
-                    }
-                }, 2000);
+                document.querySelectorAll('.power-up').forEach(p => 
+                    p.classList.remove('active'));
             }
 
             generateFood() {
@@ -529,23 +402,73 @@
                         type: Math.random() < 0.2 ? 'special' : 'normal'
                     };
                 } while (
-                    this.snake.some(segment => segment.x === food.x && segment.y === food.y) ||
-                    this.mazeWalls.some(wall => wall.x === food.x && wall.y === food.y)
+                    this.snake.some(segment => 
+                        segment.x === food.x && segment.y === food.y)
                 );
                 return food;
             }
 
-            update() {
-                if (this.paused || this.gameOver || this.minigameActive) return;
+            initializeGameMode() {
+                switch(this.gameMode) {
+                    case 'portal':
+                        this.generatePortals();
+                        break;
+                    case 'maze':
+                        this.generateMaze();
+                        break;
+                }
+            }
 
-                // Update snake position
+            generatePortals() {
+                this.portals = [];
+                for (let i = 0; i < 2; i++) {
+                    let portal;
+                    do {
+                        portal = {
+                            x: Math.floor(Math.random() * this.gridSize),
+                            y: Math.floor(Math.random() * this.gridSize),
+                            color: i === 0 ? '#00ffff' : '#ff00ff'
+                        };
+                    } while (
+                        this.snake.some(segment => 
+                            segment.x === portal.x && segment.y === portal.y)
+                    );
+                    this.portals.push(portal);
+                }
+            }
+
+            generateMaze() {
+                this.mazeWalls = [];
+                const wallCount = Math.floor(this.gridSize * this.gridSize * 0.15);
+                
+                for (let i = 0; i < wallCount; i++) {
+                    let wall;
+                    do {
+                        wall = {
+                            x: Math.floor(Math.random() * this.gridSize),
+                            y: Math.floor(Math.random() * this.gridSize)
+                        };
+                    } while (
+                        this.snake.some(segment => 
+                            segment.x === wall.x && segment.y === wall.y) ||
+                        Math.abs(wall.x - this.snake[0].x) < 3 ||
+                        Math.abs(wall.y - this.snake[0].y) < 3
+                    );
+                    this.mazeWalls.push(wall);
+                }
+            }
+
+            update() {
+                if (this.paused || this.gameOver) return;
+
+                // Get new head position
                 let newHead = {
                     x: this.snake[0].x + this.nextDirection.x,
                     y: this.snake[0].y + this.nextDirection.y
                 };
 
                 // Handle portal transportation
-                if (this.gameMode === 'portals') {
+                if (this.gameMode === 'portal') {
                     const portalIndex = this.portals.findIndex(p => 
                         p.x === newHead.x && p.y === newHead.y);
                     if (portalIndex !== -1) {
@@ -554,7 +477,6 @@
                             x: otherPortal.x + this.nextDirection.x,
                             y: otherPortal.y + this.nextDirection.y
                         };
-                        this.createPortalEffect(this.portals[portalIndex], otherPortal);
                     }
                 }
 
@@ -566,7 +488,7 @@
                     }
                 }
 
-                // Add new head
+                // Update snake position
                 this.snake.unshift(newHead);
 
                 // Check food collision
@@ -576,52 +498,58 @@
                     this.snake.pop();
                 }
 
-                // Update particles
-                this.updateParticles();
+                // Update direction for next frame
+                this.direction = {...this.nextDirection};
+
+                // Draw game state
+                this.draw();
 
                 // Check for minigame trigger
-                if (this.score > 0 && this.score % 50 === 0) {
-                    this.startRandomMinigame();
+                if (this.score > 0 && this.score % 100 === 0) {
+                    this.startMinigame();
                 }
-
-                this.direction = {...this.nextDirection};
-                this.draw();
             }
 
-            checkCollision(head) {
+            checkCollision(position) {
                 // Wall collision
-                if (head.x < 0 || head.x >= this.gridSize || 
-                    head.y < 0 || head.y >= this.gridSize) {
+                if (position.x < 0 || position.x >= this.gridSize || 
+                    position.y < 0 || position.y >= this.gridSize) {
+                    return true;
+                }
+
+                // Self collision
+                if (this.snake.some(segment => 
+                    segment.x === position.x && segment.y === position.y)) {
                     return true;
                 }
 
                 // Maze wall collision
                 if (this.gameMode === 'maze' && 
-                    this.mazeWalls.some(wall => wall.x === head.x && wall.y === head.y)) {
+                    this.mazeWalls.some(wall => 
+                        wall.x === position.x && wall.y === position.y)) {
                     return true;
                 }
 
-                // Self collision
-                return this.snake.some(segment => segment.x === head.x && segment.y === head.y);
+                return false;
+            }
+
+            checkFoodCollision(position) {
+                return position.x === this.food.x && position.y === this.food.y;
             }
 
             handleFoodCollection() {
+                // Calculate score
                 let points = this.food.type === 'special' ? 20 : 10;
-                if (this.activePowerUps.has('multiplier')) points *= 2;
-                
-                this.score += points;
-                if (this.score > this.highScore) {
-                    this.highScore = this.score;
-                    localStorage.setItem('snakeHighScore', this.highScore);
+                if (this.activePowerUps.has('double')) {
+                    points *= 2;
                 }
-                
+                this.score += points;
                 document.getElementById('scoreValue').textContent = this.score;
-                document.getElementById('highScoreValue').textContent = this.highScore;
 
-                this.createFoodEffect();
+                // Generate new food
                 this.food = this.generateFood();
 
-                // Speed up slightly in speed mode
+                // Update game speed in speed run mode
                 if (this.gameMode === 'speed') {
                     this.speed = Math.max(50, this.speed - 2);
                     if (this.gameLoop) {
@@ -631,96 +559,46 @@
                 }
             }
 
-            createFoodEffect() {
-                const x = this.food.x * this.cellSize + this.cellSize/2;
-                const y = this.food.y * this.cellSize + this.cellSize/2;
-                
-                for (let i = 0; i < 8; i++) {
-                    const angle = (i / 8) * Math.PI * 2;
-                    this.particles.push({
-                        x: x,
-                        y: y,
-                        vx: Math.cos(angle) * 3,
-                        vy: Math.sin(angle) * 3,
-                        life: 1,
-                        color: this.food.type === 'special' ? '#ffd700' : '#ff6b6b'
-                    });
-                }
-            }
-
-            updateParticles() {
-                this.particles = this.particles.filter(particle => {
-                    particle.x += particle.vx;
-                    particle.y += particle.vy;
-                    particle.life -= 0.02;
-                    return particle.life > 0;
-                });
-            }
-
-            createPortalEffect(from, to) {
-                // Add particles between portals
-                const steps = 10;
-                for (let i = 0; i < steps; i++) {
-                    const t = i / steps;
-                    this.particles.push({
-                        x: from.x * this.cellSize + (to.x - from.x) * this.cellSize * t,
-                        y: from.y * this.cellSize + (to.y - from.y) * this.cellSize * t,
-                        vx: 0,
-                        vy: 0,
-                        life: 0.5,
-                        color: '#ffffff'
-                    });
-                }
-            }
-
-            startRandomMinigame() {
-                this.minigameActive = true;
+            startMinigame() {
                 this.paused = true;
-                
                 const minigames = [
-                    this.startMemoryGame.bind(this),
-                    this.startReactionGame.bind(this),
-                    this.startMazeGame.bind(this),
-                    this.startCollectGame.bind(this)
+                    this.memoryGame.bind(this),
+                    this.reactionGame.bind(this),
+                    this.mazeGame.bind(this),
+                    this.collectGame.bind(this)
                 ];
-
                 const selectedMinigame = minigames[Math.floor(Math.random() * minigames.length)];
                 selectedMinigame();
             }
 
-            startMemoryGame() {
+            memoryGame() {
+                const sequence = Array.from({length: 4}, () => Math.floor(Math.random() * 4));
+                const directions = ['⬆️', '⬇️', '⬅️', '➡️'];
+                let playerSequence = [];
+                
                 const overlay = document.querySelector('.minigame-overlay');
                 const content = document.querySelector('.minigame-content');
                 overlay.style.display = 'flex';
                 
-                const sequence = Array.from({length: 5}, () => Math.floor(Math.random() * 4));
-                const directions = ['⬆️', '⬇️', '⬅️', '➡️'];
-                let playerSequence = [];
-                let currentIndex = 0;
-
-                content.innerHTML = `
-                    <h2>Memory Game</h2>
-                    <p>Remember the sequence!</p>
-                    <div id="sequence" style="font-size: 48px;"></div>
-                    <div id="controls" style="display: none;">
-                        ${directions.map((dir, i) => `
-                            <button onclick="window.handleMinigameInput(${i})"
-                                style="font-size: 24px; margin: 5px;">
-                                ${dir}
-                            </button>
-                        `).join('')}
-                    </div>
-                `;
-
-                const showSequence = () => {
-                    if (currentIndex < sequence.length) {
-                        document.getElementById('sequence').textContent = 
-                            directions[sequence[currentIndex]];
-                        currentIndex++;
-                        setTimeout(showSequence, 1000);
+                const showSequence = (index = 0) => {
+                    if (index < sequence.length) {
+                        content.innerHTML = `
+                            <h2>Remember the Sequence</h2>
+                            <div style="font-size: 48px;">${directions[sequence[index]]}</div>
+                        `;
+                        setTimeout(() => showSequence(index + 1), 1000);
                     } else {
-                        document.getElementById('sequence').textContent = '';
-                        document.getElementById('controls').style.display = 'block';
+                        content.innerHTML = `
+                            <h2>Repeat the Sequence</h2>
+                            <div class="direction-buttons">
+                                ${directions.map((dir, i) => `
+                                    <button onclick="window.handleMinigameInput(${i})" 
+                                        style="font-size: 24px; margin: 5px;">
+                                        ${dir}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        `;
                     }
                 };
 
@@ -737,14 +615,13 @@
                 showSequence();
             }
 
-            startReactionGame() {
+            reactionGame() {
                 const overlay = document.querySelector('.minigame-overlay');
                 const content = document.querySelector('.minigame-content');
                 overlay.style.display = 'flex';
-
+                
                 content.innerHTML = `
-                    <h2>Reaction Game</h2>
-                    <p>Click when the circle turns green!</p>
+                    <h2>Click when Green!</h2>
                     <div id="target" style="
                         width: 100px;
                         height: 100px;
@@ -757,18 +634,11 @@
 
                 const target = document.getElementById('target');
                 let startTime;
-                let hasClicked = false;
-
-                setTimeout(() => {
-                    if (!hasClicked) {
-                        target.style.background = 'green';
-                        startTime = Date.now();
-                    }
-                }, 1000 + Math.random() * 2000);
+                let clicked = false;
 
                 target.onclick = () => {
-                    if (!hasClicked) {
-                        hasClicked = true;
+                    if (!clicked) {
+                        clicked = true;
                         if (!startTime) {
                             this.endMinigame(false);
                         } else {
@@ -777,27 +647,22 @@
                         }
                     }
                 };
-            }
 
-            startMazeGame() {
-                // Implement maze escape minigame
-                // (Similar structure to other minigames)
-            }
-
-            startCollectGame() {
-                // Implement collection minigame
-                // (Similar structure to other minigames)
+                setTimeout(() => {
+                    if (!clicked) {
+                        target.style.background = 'green';
+                        startTime = Date.now();
+                    }
+                }, 1000 + Math.random() * 2000);
             }
 
             endMinigame(success) {
-                this.minigameActive = false;
+                const overlay = document.querySelector('.minigame-overlay');
+                overlay.style.display = 'none';
+                
                 this.paused = false;
-                document.querySelector('.minigame-overlay').style.display = 'none';
-
                 if (success) {
-                    this.score += 50;
-                    document.getElementById('scoreValue').textContent = this.score;
-                    this.activatePowerUp('multiplier');
+                    this.activatePowerUp('double');
                 }
             }
 
@@ -819,15 +684,10 @@
                             this.gameLoop = setInterval(() => this.update(), this.speed);
                         }
                         break;
-                    case 'freeze':
-                        this.speed *= 2;
-                        if (this.gameLoop) {
-                            clearInterval(this.gameLoop);
-                            this.gameLoop = setInterval(() => this.update(), this.speed);
+                    case 'size':
+                        for (let i = 0; i < 3; i++) {
+                            this.snake.push({...this.snake[this.snake.length - 1]});
                         }
-                        break;
-                    case 'magnet':
-                        // Implement food attraction
                         break;
                 }
 
@@ -836,8 +696,8 @@
                     this.activePowerUps.delete(type);
                     powerUp.classList.remove('active');
                     
-                    if (type === 'speed' || type === 'freeze') {
-                        this.speed = 150;
+                    if (type === 'speed') {
+                        this.speed *= 2;
                         if (this.gameLoop) {
                             clearInterval(this.gameLoop);
                             this.gameLoop = setInterval(() => this.update(), this.speed);
@@ -847,11 +707,7 @@
             }
 
             draw() {
-                // Clear canvases
-                this.gameCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-                this.effectCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-
-                // Draw background
+                // Clear canvas
                 this.gameCtx.fillStyle = '#000';
                 this.gameCtx.fillRect(0, 0, this.canvasSize, this.canvasSize);
 
@@ -869,432 +725,128 @@
                 }
 
                 // Draw portals
-                if (this.gameMode === 'portals') {
+                if (this.gameMode === 'portal') {
                     this.portals.forEach(portal => {
-                        const gradient = this.gameCtx.createRadialGradient(
-                            this.activePowerUps.clear();
-                this.minigameActive = false;
-                this.currentMinigame = null;
-                this.timeLeft = 60;
-
-                // Reset special elements
-                this.portals = [];
-                this.mazeWalls = [];
-                this.particles = [];
-
-                // Generate initial elements
-                this.food = this.generateFood();
-                this.initializeGameMode();
-
-                // Update UI
-                document.getElementById('scoreValue').textContent = '0';
-                document.getElementById('highScoreValue').textContent = this.highScore;
-                document.querySelectorAll('.power-up').forEach(p => p.classList.remove('active'));
-            }
-
-            initializeGameMode() {
-                switch(this.gameMode) {
-                    case 'maze':
-                        this.generateMaze();
-                        break;
-                    case 'portals':
-                        this.generatePortals();
-                        break;
-                    case 'chaos':
-                        this.startChaosMode();
-                        break;
-                }
-            }
-
-            generateMaze() {
-                this.mazeWalls = [];
-                const wallCount = Math.floor(this.gridSize * this.gridSize * 0.15);
-                
-                for (let i = 0; i < wallCount; i++) {
-                    const wall = {
-                        x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize)
-                    };
-                    
-                    // Don't place walls near snake start
-                    if (Math.abs(wall.x - this.snake[0].x) > 2 || 
-                        Math.abs(wall.y - this.snake[0].y) > 2) {
-                        this.mazeWalls.push(wall);
-                    }
-                }
-            }
-
-            generatePortals() {
-                this.portals = [];
-                for (let i = 0; i < 2; i++) {
-                    const portal = {
-                        x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize),
-                        color: i === 0 ? '#00ffff' : '#ff00ff'
-                    };
-                    this.portals.push(portal);
-                }
-            }
-
-            startChaosMode() {
-                this.chaosInterval = setInterval(() => {
-                    if (!this.paused && !this.gameOver) {
-                        if (Math.random() < 0.3) this.food = this.generateFood();
-                        if (Math.random() < 0.2) this.generatePortals();
-                    }
-                }, 2000);
-            }
-
-            generateFood() {
-                let food;
-                do {
-                    food = {
-                        x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize),
-                        type: Math.random() < 0.2 ? 'special' : 'normal'
-                    };
-                } while (
-                    this.snake.some(segment => segment.x === food.x && segment.y === food.y) ||
-                    this.mazeWalls.some(wall => wall.x === food.x && wall.y === food.y)
-                );
-                return food;
-            }
-
-            update() {
-                if (this.paused || this.gameOver || this.minigameActive) return;
-
-                // Update snake position
-                let newHead = {
-                    x: this.snake[0].x + this.nextDirection.x,
-                    y: this.snake[0].y + this.nextDirection.y
-                };
-
-                // Handle portal transportation
-                if (this.gameMode === 'portals') {
-                    const portalIndex = this.portals.findIndex(p => 
-                        p.x === newHead.x && p.y === newHead.y);
-                    if (portalIndex !== -1) {
-                        const otherPortal = this.portals[1 - portalIndex];
-                        newHead = {
-                            x: otherPortal.x + this.nextDirection.x,
-                            y: otherPortal.y + this.nextDirection.y
-                        };
-                        this.createPortalEffect(this.portals[portalIndex], otherPortal);
-                    }
-                }
-
-                // Check collisions
-                if (this.checkCollision(newHead)) {
-                    if (!this.activePowerUps.has('ghost')) {
-                        this.handleGameOver();
-                        return;
-                    }
-                }
-
-                // Add new head
-                this.snake.unshift(newHead);
-
-                // Check food collision
-                if (this.checkFoodCollision(newHead)) {
-                    this.handleFoodCollection();
-                } else {
-                    this.snake.pop();
-                }
-
-                // Update particles
-                this.updateParticles();
-
-                // Check for minigame trigger
-                if (this.score > 0 && this.score % 50 === 0) {
-                    this.startRandomMinigame();
-                }
-
-                this.direction = {...this.nextDirection};
-                this.draw();
-            }
-
-            checkCollision(head) {
-                // Wall collision
-                if (head.x < 0 || head.x >= this.gridSize || 
-                    head.y < 0 || head.y >= this.gridSize) {
-                    return true;
-                }
-
-                // Maze wall collision
-                if (this.gameMode === 'maze' && 
-                    this.mazeWalls.some(wall => wall.x === head.x && wall.y === head.y)) {
-                    return true;
-                }
-
-                // Self collision
-                return this.snake.some(segment => segment.x === head.x && segment.y === head.y);
-            }
-
-            handleFoodCollection() {
-                let points = this.food.type === 'special' ? 20 : 10;
-                if (this.activePowerUps.has('multiplier')) points *= 2;
-                
-                this.score += points;
-                if (this.score > this.highScore) {
-                    this.highScore = this.score;
-                    localStorage.setItem('snakeHighScore', this.highScore);
-                }
-                
-                document.getElementById('scoreValue').textContent = this.score;
-                document.getElementById('highScoreValue').textContent = this.highScore;
-
-                this.createFoodEffect();
-                this.food = this.generateFood();
-
-                // Speed up slightly in speed mode
-                if (this.gameMode === 'speed') {
-                    this.speed = Math.max(50, this.speed - 2);
-                    if (this.gameLoop) {
-                        clearInterval(this.gameLoop);
-                        this.gameLoop = setInterval(() => this.update(), this.speed);
-                    }
-                }
-            }
-
-            createFoodEffect() {
-                const x = this.food.x * this.cellSize + this.cellSize/2;
-                const y = this.food.y * this.cellSize + this.cellSize/2;
-                
-                for (let i = 0; i < 8; i++) {
-                    const angle = (i / 8) * Math.PI * 2;
-                    this.particles.push({
-                        x: x,
-                        y: y,
-                        vx: Math.cos(angle) * 3,
-                        vy: Math.sin(angle) * 3,
-                        life: 1,
-                        color: this.food.type === 'special' ? '#ffd700' : '#ff6b6b'
+                        this.gameCtx.fillStyle = portal.color;
+                        this.gameCtx.beginPath();
+                        this.gameCtx.arc(
+                            portal.x * this.cellSize + this.cellSize/2,
+                            portal.y * this.cellSize + this.cellSize/2,
+                            this.cellSize/2,
+                            0,
+                            Math.PI * 2
+                        );
+                        this.gameCtx.fill();
                     });
                 }
+
+                // Draw snake
+                this.snake.forEach((segment, index) => {
+                    let color;
+                    if (this.gameMode === 'rainbow') {
+                        const hue = (Date.now() / 20 + index * 10) % 360;
+                        color = `hsl(${hue}, 100%, 50%)`;
+                    } else {
+                        color = index === 0 ? '#4ecca3' : '#3db892';
+                    }
+
+                    if (this.activePowerUps.has('ghost')) {
+                        this.gameCtx.globalAlpha = 0.5;
+                    }
+
+                    this.gameCtx.fillStyle = color;
+                    this.gameCtx.fillRect(
+                        segment.x * this.cellSize + 1,
+                        segment.y * this.cellSize + 1,
+                        this.cellSize - 2,
+                        this.cellSize - 2
+                    );
+
+                    this.gameCtx.globalAlpha = 1;
+                });
+
+                // Draw food
+                this.gameCtx.fillStyle = this.food.type === 'special' ? '#ffd700' : '#ff6b6b';
+                this.gameCtx.beginPath();
+                this.gameCtx.arc(
+                    this.food.x * this.cellSize + this.cellSize/2,
+                    this.food.y * this.cellSize + this.cellSize/2,
+                    this.cellSize/2 - 2,
+                    0,
+                    Math.PI * 2
+                );
+                this.gameCtx.fill();
             }
 
-            updateParticles() {
-                this.particles = this.particles.filter(particle => {
-                    particle.x += particle.vx;
-                    particle.y += particle.vy;
-                    particle.life -= 0.02;
-                    return particle.life > 0;
+            start() {
+                this.reset();
+                this.countDown(() => {
+                    this.gameLoop = setInterval(() => this.update(), this.speed);
+                    document.getElementById('startButton').textContent = 'Restart';
                 });
             }
 
-            createPortalEffect(from, to) {
-                // Add particles between portals
-                const steps = 10;
-                for (let i = 0; i < steps; i++) {
-                    const t = i / steps;
-                    this.particles.push({
-                        x: from.x * this.cellSize + (to.x - from.x) * this.cellSize * t,
-                        y: from.y * this.cellSize + (to.y - from.y) * this.cellSize * t,
-                        vx: 0,
-                        vy: 0,
-                        life: 0.5,
-                        color: '#ffffff'
-                    });
-                }
-            }
-
-            startRandomMinigame() {
-                this.minigameActive = true;
-                this.paused = true;
-                
-                const minigames = [
-                    this.startMemoryGame.bind(this),
-                    this.startReactionGame.bind(this),
-                    this.startMazeGame.bind(this),
-                    this.startCollectGame.bind(this)
-                ];
-
-                const selectedMinigame = minigames[Math.floor(Math.random() * minigames.length)];
-                selectedMinigame();
-            }
-
-            startMemoryGame() {
+            countDown(callback) {
                 const overlay = document.querySelector('.minigame-overlay');
                 const content = document.querySelector('.minigame-content');
-                overlay.style.display = 'flex';
-                
-                const sequence = Array.from({length: 5}, () => Math.floor(Math.random() * 4));
-                const directions = ['⬆️', '⬇️', '⬅️', '➡️'];
-                let playerSequence = [];
-                let currentIndex = 0;
+                let count = 3;
 
-                content.innerHTML = `
-                    <h2>Memory Game</h2>
-                    <p>Remember the sequence!</p>
-                    <div id="sequence" style="font-size: 48px;"></div>
-                    <div id="controls" style="display: none;">
-                        ${directions.map((dir, i) => `
-                            <button onclick="window.handleMinigameInput(${i})"
-                                style="font-size: 24px; margin: 5px;">
-                                ${dir}
-                            </button>
-                        `).join('')}
-                    </div>
-                `;
-
-                const showSequence = () => {
-                    if (currentIndex < sequence.length) {
-                        document.getElementById('sequence').textContent = 
-                            directions[sequence[currentIndex]];
-                        currentIndex++;
-                        setTimeout(showSequence, 1000);
-                    } else {
-                        document.getElementById('sequence').textContent = '';
-                        document.getElementById('controls').style.display = 'block';
-                    }
-                };
-
-                window.handleMinigameInput = (input) => {
-                    playerSequence.push(input);
-                    if (playerSequence[playerSequence.length - 1] !== 
-                        sequence[playerSequence.length - 1]) {
-                        this.endMinigame(false);
-                    } else if (playerSequence.length === sequence.length) {
-                        this.endMinigame(true);
-                    }
-                };
-
-                showSequence();
-            }
-
-            startReactionGame() {
-                const overlay = document.querySelector('.minigame-overlay');
-                const content = document.querySelector('.minigame-content');
-                overlay.style.display = 'flex';
-
-                content.innerHTML = `
-                    <h2>Reaction Game</h2>
-                    <p>Click when the circle turns green!</p>
-                    <div id="target" style="
-                        width: 100px;
-                        height: 100px;
-                        background: red;
-                        border-radius: 50%;
-                        margin: 20px auto;
-                        cursor: pointer;
-                    "></div>
-                `;
-
-                const target = document.getElementById('target');
-                let startTime;
-                let hasClicked = false;
-
-                setTimeout(() => {
-                    if (!hasClicked) {
-                        target.style.background = 'green';
-                        startTime = Date.now();
-                    }
-                }, 1000 + Math.random() * 2000);
-
-                target.onclick = () => {
-                    if (!hasClicked) {
-                        hasClicked = true;
-                        if (!startTime) {
-                            this.endMinigame(false);
-                        } else {
-                            const reactionTime = Date.now() - startTime;
-                            this.endMinigame(reactionTime < 500);
-                        }
-                    }
-                };
-            }
-
-            startMazeGame() {
-                // Implement maze escape minigame
-                // (Similar structure to other minigames)
-            }
-
-            startCollectGame() {
-                // Implement collection minigame
-                // (Similar structure to other minigames)
-            }
-
-            endMinigame(success) {
-                this.minigameActive = false;
-                this.paused = false;
-                document.querySelector('.minigame-overlay').style.display = 'none';
-
-                if (success) {
-                    this.score += 50;
-                    document.getElementById('scoreValue').textContent = this.score;
-                    this.activatePowerUp('multiplier');
-                }
-            }
-
-            activatePowerUp(type) {
-                if (this.paused || this.gameOver) return;
-
-                const powerUp = document.querySelector(`.power-up[data-power="${type}"]`);
-                if (powerUp.classList.contains('active')) return;
-
-                this.activePowerUps.add(type);
-                powerUp.classList.add('active');
-
-                // Apply power-up effects
-                switch(type) {
-                    case 'speed':
-                        this.speed /= 2;
-                        if (this.gameLoop) {
-                            clearInterval(this.gameLoop);
-                            this.gameLoop = setInterval(() => this.update(), this.speed);
-                        }
-                        break;
-                    case 'freeze':
-                        this.speed *= 2;
-                        if (this.gameLoop) {
-                            clearInterval(this.gameLoop);
-                            this.gameLoop = setInterval(() => this.update(), this.speed);
-                        }
-                        break;
-                    case 'magnet':
-                        // Implement food attraction
-                        break;
-                }
-
-                // Remove power-up after duration
-                setTimeout(() => {
-                    this.activePowerUps.delete(type);
-                    powerUp.classList.remove('active');
+                const showCount = () => {
+                    content.innerHTML = `<h1>${count}</h1>`;
+                    overlay.style.display = 'flex';
                     
-                    if (type === 'speed' || type === 'freeze') {
-                        this.speed = 150;
-                        if (this.gameLoop) {
-                            clearInterval(this.gameLoop);
-                            this.gameLoop = setInterval(() => this.update(), this.speed);
-                        }
+                    if (count > 0) {
+                        count--;
+                        setTimeout(showCount, 1000);
+                    } else {
+                        content.innerHTML = '<h1>GO!</h1>';
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                            callback();
+                        }, 500);
                     }
-                }, 10000);
+                };
+
+                showCount();
             }
 
-            draw() {
-                // Clear canvases
-                this.gameCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-                this.effectCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+            togglePause() {
+                if (this.gameOver) return;
+                
+                this.paused = !this.paused;
+                document.getElementById('pauseButton').textContent = 
+                    this.paused ? 'Resume' : 'Pause';
 
-                // Draw background
-                this.gameCtx.fillStyle = '#000';
-                this.gameCtx.fillRect(0, 0, this.canvasSize, this.canvasSize);
-
-                // Draw maze walls
-                if (this.gameMode === 'maze') {
-                    this.gameCtx.fillStyle = '#666';
-                    this.mazeWalls.forEach(wall => {
-                        this.gameCtx.fillRect(
-                            wall.x * this.cellSize,
-                            wall.y * this.cellSize,
-                            this.cellSize - 1,
-                            this.cellSize - 1
-                        );
+                if (this.paused) {
+                    clearInterval(this.gameLoop);
+                } else {
+                    this.countDown(() => {
+                        this.gameLoop = setInterval(() => this.update(), this.speed);
                     });
                 }
+            }
 
-                // Draw portals
-                if (this.gameMode === 'portals') {
-                    this.portals.forEach(portal => {
-                        const gradient = this.gameCtx.createRadialGradient(
-                            portal.x * this.cellSize + this.
+            handleGameOver() {
+                this.gameOver = true;
+                clearInterval(this.gameLoop);
+
+                const overlay = document.querySelector('.minigame-overlay');
+                const content = document.querySelector('.minigame-content');
+                
+                overlay.style.display = 'flex';
+                content.innerHTML = `
+                    <h2>Game Over!</h2>
+                    <p>Score: ${this.score}</p>
+                    <button onclick="game.start()" 
+                        style="padding: 10px 20px; margin-top: 20px;">
+                        Play Again
+                    </button>
+                `;
+            }
+        }
+
+        // Initialize game
+        const game = new SnakeGame();
+    </script>
+</body>
+</html>
