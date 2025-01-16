@@ -1,852 +1,448 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Snake Arcade</title>
-    <style>
-        :root {
-            --primary: #4ecca3;
-            --secondary: #ff6b6b;
-            --accent: #ffd700;
-            --dark: #1a1a2e;
-            --darker: #151525;
-        }
+import React, { useState, useEffect } from 'react';
+import { Shuffle, Trophy, LogIn, LogOut, User, Star, Lock } from 'lucide-react';
 
-        body {
-            margin: 0;
-            background: linear-gradient(135deg, var(--dark), var(--darker));
-            color: white;
-            font-family: Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+const MemoryGame = () => {
+  // User state
+  const [username, setUsername] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginInput, setLoginInput] = useState('');
+  
+  // Game state
+  const [level, setLevel] = useState(1);
+  const [theme, setTheme] = useState('animals');
+  const [cards, setCards] = useState([]);
+  const [flipped, setFlipped] = useState([]);
+  const [matched, setMatched] = useState([]);
+  const [moves, setMoves] = useState(0);
+  const [gameWon, setGameWon] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [unlockedLevels, setUnlockedLevels] = useState([1]);
+  const [score, setScore] = useState(0);
+  
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState({});
+  const [personalBest, setPersonalBest] = useState({});
 
-        #gameContainer {
-            display: flex;
-            gap: 20px;
-        }
+  // Define levels configuration
+  const levels = {
+    1: { name: "Beginner", cards: 8, timeLimit: 60, scoreToUnlock: 0 },
+    2: { name: "Easy", cards: 12, timeLimit: 90, scoreToUnlock: 100 },
+    3: { name: "Medium", cards: 16, timeLimit: 120, scoreToUnlock: 300 },
+    4: { name: "Hard", cards: 24, timeLimit: 180, scoreToUnlock: 600 },
+    5: { name: "Expert", cards: 32, timeLimit: 240, scoreToUnlock: 1000 },
+    6: { name: "Master", cards: 40, timeLimit: 300, scoreToUnlock: 1500 },
+    7: { name: "Champion", cards: 48, timeLimit: 360, scoreToUnlock: 2000 },
+    8: { name: "Legend", cards: 52, timeLimit: 420, scoreToUnlock: 2500 },
+  };
 
-        .game-area {
-            position: relative;
-        }
+  // Theme configuration with emojis for each level
+  const themes = {
+    animals: {
+      name: 'Animals',
+      emojis: ['🐶', '🐱', '🐰', '🐼', '🦊', '🦁', '🐨', '🐯', '🦒', '🐘', '🦓', '🦔', '🦘', '🦬', 
+               '🦣', '🦏', '🦛', '🐪', '🦒', '🦭', '🐄', '🦫', '🦦', '🦡', '🦨', '🐗'],
+      colors: {
+        primary: 'bg-green-500 hover:bg-green-600',
+        secondary: 'bg-green-100',
+        accent: 'border-green-500',
+        text: 'text-green-800'
+      },
+      pattern: 'bg-gradient-to-r from-green-50 to-green-100'
+    },
+    ocean: {
+      name: 'Ocean',
+      emojis: ['🐠', '🐋', '🦈', '🐡', '🦀', '🐙', '🦑', '🐚', '🐳', '🐟', '🦞', '🦐', '🐌', '🦪', 
+               '🐋', '🐬', '🐊', '🦭', '🦫', '🦦', '🐢', '🐍', '🦎', '🐸', '🐉', '🦕'],
+      colors: {
+        primary: 'bg-blue-500 hover:bg-blue-600',
+        secondary: 'bg-blue-100',
+        accent: 'border-blue-500',
+        text: 'text-blue-800'
+      },
+      pattern: 'bg-gradient-to-r from-blue-50 to-blue-100'
+    },
+    fantasy: {
+      name: 'Fantasy',
+      emojis: ['🧚', '🧙', '🦄', '🐉', '🧜', '🧝', '🧞', '🧛', '🧟', '🧌', '👻', '👽', '👾', '🤖', 
+               '🎭', '🌟', '✨', '💫', '⭐', '🌙', '☀️', '🌈', '🔮', '⚡', '🪄', '🎪'],
+      colors: {
+        primary: 'bg-purple-500 hover:bg-purple-600',
+        secondary: 'bg-purple-100',
+        accent: 'border-purple-500',
+        text: 'text-purple-800'
+      },
+      pattern: 'bg-gradient-to-r from-purple-50 to-purple-100'
+    }
+  };
 
-        canvas {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-        }
+  // Timer effect
+  useEffect(() => {
+    let interval;
+    if (isPlaying && timer < levels[level].timeLimit) {
+      interval = setInterval(() => {
+        setTimer(prev => {
+          if (prev + 1 >= levels[level].timeLimit) {
+            handleGameOver();
+            return levels[level].timeLimit;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, timer, level]);
 
-        #uiCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
+  // Load saved data
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('memoryGameUsername');
+    const savedUnlockedLevels = JSON.parse(localStorage.getItem('memoryGameUnlockedLevels')) || [1];
+    const savedScore = parseInt(localStorage.getItem('memoryGameScore')) || 0;
+    
+    if (savedUsername) {
+      setUsername(savedUsername);
+      setIsLoggedIn(true);
+      setUnlockedLevels(savedUnlockedLevels);
+      setScore(savedScore);
+      loadPersonalBest(savedUsername);
+    }
+  }, []);
 
-        .panel {
-            width: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            backdrop-filter: blur(5px);
-        }
+  const loadPersonalBest = (user) => {
+    const savedBest = localStorage.getItem(`memoryGame_${user}_best`);
+    if (savedBest) {
+      setPersonalBest(JSON.parse(savedBest));
+    }
+  };
 
-        .score {
-            font-size: 32px;
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
+  const handleLogin = () => {
+    if (loginInput.trim()) {
+      setUsername(loginInput);
+      setIsLoggedIn(true);
+      localStorage.setItem('memoryGameUsername', loginInput);
+      loadPersonalBest(loginInput);
+      setLoginInput('');
+    }
+  };
 
-        .modes {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername('');
+    localStorage.removeItem('memoryGameUsername');
+    setUnlockedLevels([1]);
+    setScore(0);
+    setPersonalBest({});
+  };
 
-        .mode-btn {
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
+  const initializeGame = () => {
+    const numPairs = levels[level].cards / 2;
+    const gameCards = [];
+    const themeEmojis = [...themes[theme].emojis];
+    
+    // Create pairs of cards
+    for (let i = 0; i < numPairs; i++) {
+      const emoji = themeEmojis[i];
+      gameCards.push(emoji);
+      gameCards.push(emoji);
+    }
+    
+    const shuffledCards = [...gameCards].sort(() => Math.random() - 0.5);
+    setCards(shuffledCards);
+    setFlipped([]);
+    setMatched([]);
+    setMoves(0);
+    setGameWon(false);
+    setTimer(0);
+    setIsPlaying(true);
+  };
 
-        .mode-btn.active {
-            background: var(--primary);
-        }
+  const calculateScore = () => {
+    const timeBonus = Math.max(0, levels[level].timeLimit - timer);
+    const movesPenalty = moves * 2;
+    const levelBonus = level * 50;
+    return Math.max(0, 100 + timeBonus + levelBonus - movesPenalty);
+  };
 
-        .power-ups {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+  const handleGameOver = () => {
+    setIsPlaying(false);
+    if (matched.length !== cards.length) {
+      setGameWon(false);
+    }
+  };
 
-        .power-up {
-            aspect-ratio: 1;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
+  const handleCardClick = (index) => {
+    if (!isPlaying || flipped.length === 2 || flipped.includes(index) || matched.includes(index)) {
+      return;
+    }
 
-        .power-up.active {
-            background: var(--primary);
-        }
+    const newFlipped = [...flipped, index];
+    setFlipped(newFlipped);
 
-        .power-up-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
+    if (newFlipped.length === 2) {
+      setMoves(moves + 1);
+      const [first, second] = newFlipped;
+      
+      if (cards[first] === cards[second]) {
+        setMatched([...matched, first, second]);
+        setFlipped([]);
+        
+        if (matched.length + 2 === cards.length) {
+          handleGameWin();
         }
+      } else {
+        setTimeout(() => setFlipped([]), 1000);
+      }
+    }
+  };
 
-        .settings {
-            margin-bottom: 20px;
+  const handleGameWin = () => {
+    setGameWon(true);
+    setIsPlaying(false);
+    
+    if (isLoggedIn) {
+      const gameScore = calculateScore();
+      const newTotalScore = score + gameScore;
+      setScore(newTotalScore);
+      
+      // Update unlocked levels
+      const newUnlockedLevels = [...unlockedLevels];
+      Object.entries(levels).forEach(([levelNum, config]) => {
+        if (newTotalScore >= config.scoreToUnlock && !newUnlockedLevels.includes(parseInt(levelNum))) {
+          newUnlockedLevels.push(parseInt(levelNum));
         }
+      });
+      
+      setUnlockedLevels(newUnlockedLevels);
+      localStorage.setItem('memoryGameUnlockedLevels', JSON.stringify(newUnlockedLevels));
+      localStorage.setItem('memoryGameScore', newTotalScore.toString());
+      
+      // Update personal best
+      const currentScore = { moves, time: timer, score: gameScore };
+      if (!personalBest[level] || gameScore > personalBest[level].score) {
+        const newPersonalBest = { ...personalBest, [level]: currentScore };
+        setPersonalBest(newPersonalBest);
+        localStorage.setItem(`memoryGame_${username}_best`, JSON.stringify(newPersonalBest));
+      }
+    }
+  };
 
-        .setting-group {
-            margin-bottom: 10px;
-        }
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--primary);
-        }
-
-        select, input[type="range"] {
-            width: 100%;
-            padding: 5px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--primary);
-            border-radius: 4px;
-            color: white;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        button:hover {
-            background: #3db892;
-        }
-
-        .minigame-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-        }
-
-        .minigame-content {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .controls {
-            margin-top: 20px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-        }
-    </style>
-</head>
-<body>
-    <div id="gameContainer">
-        <div class="game-area">
-            <canvas id="gameCanvas"></canvas>
-            <canvas id="uiCanvas"></canvas>
-            <div class="minigame-overlay">
-                <div class="minigame-content"></div>
+  return (
+    <div className={`max-w-6xl mx-auto p-4 min-h-screen ${themes[theme].pattern}`}>
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className={`text-3xl font-bold ${themes[theme].text}`}>Memory Game</h1>
+        
+        {/* User Section */}
+        <div className="flex items-center gap-4">
+          {!isLoggedIn ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={loginInput}
+                onChange={(e) => setLoginInput(e.target.value)}
+                placeholder="Enter username"
+                className="px-3 py-2 border rounded"
+              />
+              <button
+                onClick={handleLogin}
+                className={`flex items-center gap-2 px-4 py-2 ${themes[theme].primary} text-white rounded`}
+              >
+                <LogIn className="w-4 h-4" />
+                Login
+              </button>
             </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-2">
+                <User className="w-4 h-4" />
+                {username}
+              </span>
+              <span className="flex items-center gap-2">
+                <Star className="w-4 h-4" />
+                Score: {score}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
+      </div>
 
-        <div class="panel">
-            <div class="score">Score: <span id="scoreValue">0</span></div>
-            
-            <div class="modes">
-                <button class="mode-btn active" data-mode="classic">Classic</button>
-                <button class="mode-btn" data-mode="timeAttack">Time Attack</button>
-                <button class="mode-btn" data-mode="portal">Portal</button>
-                <button class="mode-btn" data-mode="maze">Maze</button>
-                <button class="mode-btn" data-mode="speed">Speed Run</button>
-                <button class="mode-btn" data-mode="rainbow">Rainbow</button>
-            </div>
-
-            <div class="power-ups">
-                <div class="power-up" data-power="speed">
-                    <div class="power-up-icon">⚡</div>
-                    <div>Speed</div>
-                </div>
-                <div class="power-up" data-power="ghost">
-                    <div class="power-up-icon">👻</div>
-                    <div>Ghost</div>
-                </div>
-                <div class="power-up" data-power="shield">
-                    <div class="power-up-icon">🛡️</div>
-                    <div>Shield</div>
-                </div>
-                <div class="power-up" data-power="magnet">
-                    <div class="power-up-icon">🧲</div>
-                    <div>Magnet</div>
-                </div>
-                <div class="power-up" data-power="double">
-                    <div class="power-up-icon">✨</div>
-                    <div>2x Points</div>
-                </div>
-                <div class="power-up" data-power="size">
-                    <div class="power-up-icon">📏</div>
-                    <div>Size</div>
-                </div>
-            </div>
-
-            <div class="settings">
-                <div class="setting-group">
-                    <label>Grid Size</label>
-                    <select id="gridSize">
-                        <option value="10">10x10 (Large)</option>
-                        <option value="15">15x15 (Medium)</option>
-                        <option value="20" selected>20x20 (Small)</option>
-                        <option value="25">25x25 (Tiny)</option>
-                    </select>
-                </div>
-
-                <div class="setting-group">
-                    <label>Speed: <span id="speedValue">Normal</span></label>
-                    <input type="range" id="gameSpeed" min="50" max="200" value="100">
-                </div>
-            </div>
-
-            <button id="startButton">Start Game</button>
-            <button id="pauseButton">Pause</button>
-
-            <div class="controls">
-                <p>Controls:</p>
-                <p>↑↓←→ or WASD to move</p>
-                <p>Space to pause</p>
-                <p>1-6 for power-ups</p>
-            </div>
+      {/* Game Controls */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex gap-4">
+          <select
+            value={level}
+            onChange={(e) => setLevel(parseInt(e.target.value))}
+            className="px-3 py-2 border rounded"
+          >
+            {Object.entries(levels).map(([num, config]) => (
+              <option 
+                key={num} 
+                value={num}
+                disabled={!unlockedLevels.includes(parseInt(num))}
+              >
+                {config.name} ({config.cards} cards) {!unlockedLevels.includes(parseInt(num)) && '🔒'}
+              </option>
+            ))}
+          </select>
+          <select
+            value={theme}
+            onChange={(e) => setTheme(e.target.value)}
+            className="px-3 py-2 border rounded"
+          >
+            {Object.entries(themes).map(([key, value]) => (
+              <option key={key} value={key}>{value.name}</option>
+            ))}
+          </select>
+          <button
+            onClick={initializeGame}
+            className={`flex items-center gap-2 px-4 py-2 ${themes[theme].primary} text-white rounded`}
+          >
+            <Shuffle className="w-4 h-4" />
+            New Game
+          </button>
         </div>
+        
+        <div className="flex gap-4 items-center">
+          <span>Moves: {moves}</span>
+          <span>Time: {formatTime(timer)} / {formatTime(levels[level].timeLimit)}</span>
+        </div>
+      </div>
+
+      {/* Game Grid */}
+      <div className={`grid gap-4 mb-6 ${
+        cards.length <= 12 ? 'grid-cols-4' :
+        cards.length <= 20 ? 'grid-cols-5' :
+        cards.length <= 30 ? 'grid-cols-6' :
+        'grid-cols-8'
+      }`}>
+        {cards.map((card, index) => (
+          <button
+            key={index}
+            onClick={() => handleCardClick(index)}
+            className={`aspect-square text-4xl flex items-center justify-center rounded-lg transition-all duration-300 transform 
+              ${flipped.includes(index) || matched.includes(index)
+                ? `${themes[theme].secondary} ${themes[theme].accent} border-2`
+                : themes[theme].primary}`}
+            disabled={!isPlaying}
+          >
+            {(flipped.includes(index) || matched.includes(index)) ? (
+              <span className="text-4xl">{card}</span>
+            ) : '?'}
+          </button>
+        ))}
+      </div>
+
+      {/* Level Progress Section */}
+      {isLoggedIn && (
+        <div className="mb-6 p-4 bg-white rounded-lg shadow">
+          <h2 className={`text-xl font-bold mb-4 ${themes[theme].text}`}>Level Progress</h2>
+          <div className="grid grid-cols-4 gap-4">
+            {Object.entries(levels).map(([num, config]) => (
+              <div 
+                key={num}
+                className={`p-4 rounded-lg border ${
+                  unlockedLevels.includes(parseInt(num))
+                    ? themes[theme].accent
+                    : 'border-gray-300'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-bold">{config.name}</span>
+                  {!unlockedLevels.includes(parseInt(num)) && (
+                    <Lock className="w-4 h-4 text-gray-500" />
+                  )}
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p>Cards: {config.cards}</p>
+                  <p>Time: {formatTime(config.timeLimit)}</p>
+                  <p>Required Score: {config.scoreToUnlock}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Personal Best Section */}
+      {isLoggedIn && Object.keys(personalBest).length > 0 && (
+        <div className="mb-6">
+          <h2 className={`text-xl font-bold mb-4 ${themes[theme].text}`}>Your Best Scores</h2>
+          <div className="grid grid-cols-4 gap-4">
+            {Object.entries(personalBest).map(([level, stats]) => (
+              <div key={level} className="p-4 bg-white rounded-lg shadow">
+                <h3 className="font-bold mb-2">{levels[level].name}</h3>
+                <p>Moves: {stats.moves}</p>
+                <p>Time: {formatTime(stats.time)}</p>
+                <p>Score: {stats.score}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Game Over Modal */}
+      {(gameWon || (!isPlaying && timer >= levels[level].timeLimit)) && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg text-center max-w-md">
+            <h2 className={`text-2xl font-bold mb-4 ${
+              gameWon ? 'text-green-600' : 'text-red-600'
+            }`}>
+              {gameWon ? 'Congratulations!' : 'Time\'s Up!'}
+            </h2>
+            {gameWon && (
+              <>
+                <p className="mb-2">
+                  Moves: {moves} | Time: {formatTime(timer)}
+                </p>
+                <p className="mb-4">
+                  Score: {calculateScore()}
+                </p>
+                {level < Object.keys(levels).length && (
+                  <p className="mb-4">
+                    {unlockedLevels.includes(level + 1) 
+                      ? 'Next level unlocked!'
+                      : `Score ${levels[level + 1].scoreToUnlock} points to unlock next level`}
+                  </p>
+                )}
+              </>
+            )}
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={initializeGame}
+                className={`px-4 py-2 ${themes[theme].primary} text-white rounded`}
+              >
+                Play Again
+              </button>
+              {gameWon && level < Object.keys(levels).length && unlockedLevels.includes(level + 1) && (
+                <button
+                  onClick={() => {
+                    setLevel(level + 1);
+                    initializeGame();
+                  }}
+                  className={`px-4 py-2 ${themes[theme].primary} text-white rounded`}
+                >
+                  Next Level
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+};
 
-    <script>
-        class SnakeGame {
-            constructor() {
-                this.gameCanvas = document.getElementById('gameCanvas');
-                this.uiCanvas = document.getElementById('uiCanvas');
-                this.gameCtx = this.gameCanvas.getContext('2d');
-                this.uiCtx = this.uiCanvas.getContext('2d');
-
-                // Set canvas sizes
-                this.setCanvasSize(600);
-
-                // Game state
-                this.gridSize = 20;
-                this.cellSize = this.canvasSize / this.gridSize;
-                this.score = 0;
-                this.speed = 150;
-                this.gameMode = 'classic';
-                this.activePowerUps = new Set();
-
-                // Initialize game
-                this.setupControls();
-                this.reset();
-            }
-
-            setCanvasSize(size) {
-                this.canvasSize = size;
-                this.gameCanvas.width = size;
-                this.gameCanvas.height = size;
-                this.uiCanvas.width = size;
-                this.uiCanvas.height = size;
-                this.cellSize = size / this.gridSize;
-            }
-
-            setupControls() {
-                // Mode selection
-                document.querySelectorAll('.mode-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.mode-btn').forEach(b => 
-                            b.classList.remove('active'));
-                        btn.classList.add('active');
-                        this.gameMode = btn.dataset.mode;
-                        if (!this.gameOver) this.reset();
-                    });
-                });
-
-                // Power-up activation
-                document.querySelectorAll('.power-up').forEach(powerUp => {
-                    powerUp.addEventListener('click', () => {
-                        this.activatePowerUp(powerUp.dataset.power);
-                    });
-                });
-
-                // Settings controls
-                document.getElementById('gridSize').addEventListener('change', (e) => {
-                    this.gridSize = parseInt(e.target.value);
-                    this.cellSize = this.canvasSize / this.gridSize;
-                    if (!this.gameOver) this.reset();
-                });
-
-                document.getElementById('gameSpeed').addEventListener('input', (e) => {
-                    const speed = parseInt(e.target.value);
-                    this.speed = 200 - speed;
-                    const speedText = speed < 75 ? "Slow" : speed > 150 ? "Fast" : "Normal";
-                    document.getElementById('speedValue').textContent = speedText;
-                    
-                    if (this.gameLoop) {
-                        clearInterval(this.gameLoop);
-                        this.gameLoop = setInterval(() => this.update(), this.speed);
-                    }
-                });
-
-                // Game controls
-                document.addEventListener('keydown', (e) => {
-                    if (this.gameOver) return;
-
-                    const key = e.key.toLowerCase();
-                    const directionMap = {
-                        'arrowleft': {x: -1, y: 0},
-                        'arrowright': {x: 1, y: 0},
-                        'arrowup': {x: 0, y: -1},
-                        'arrowdown': {x: 0, y: 1},
-                        'a': {x: -1, y: 0},
-                        'd': {x: 1, y: 0},
-                        'w': {x: 0, y: -1},
-                        's': {x: 0, y: 1},
-                        ' ': 'pause'
-                    };
-
-                    if (directionMap[key] === 'pause') {
-                        this.togglePause();
-                    } else if (directionMap[key] && !this.paused) {
-                        const newDir = directionMap[key];
-                        if (this.direction.x !== -newDir.x || this.direction.y !== -newDir.y) {
-                            this.nextDirection = newDir;
-                        }
-                    }
-
-                    // Power-up hotkeys (1-6)
-                    if (key >= '1' && key <= '6') {
-                        const powerUps = ['speed', 'ghost', 'shield', 'magnet', 'double', 'size'];
-                        this.activatePowerUp(powerUps[parseInt(key) - 1]);
-                    }
-                });
-
-                // Button controls
-                document.getElementById('startButton').addEventListener('click', () => 
-                    this.start());
-                document.getElementById('pauseButton').addEventListener('click', () => 
-                    this.togglePause());
-            }
-
-            reset() {
-                clearInterval(this.gameLoop);
-                
-                // Reset snake
-                const mid = Math.floor(this.gridSize / 3);
-                this.snake = [{x: mid, y: mid}];
-                this.direction = {x: 1, y: 0};
-                this.nextDirection = {x: 1, y: 0};
-                
-                // Reset game state
-                this.score = 0;
-                this.gameOver = false;
-                this.paused = false;
-                this.activePowerUps.clear();
-                
-                // Reset mode-specific elements
-                this.portals = [];
-                this.mazeWalls = [];
-                
-                // Generate initial elements
-                this.food = this.generateFood();
-                this.initializeGameMode();
-                
-                // Update UI
-                document.getElementById('scoreValue').textContent = '0';
-                document.querySelectorAll('.power-up').forEach(p => 
-                    p.classList.remove('active'));
-            }
-
-            generateFood() {
-                let food;
-                do {
-                    food = {
-                        x: Math.floor(Math.random() * this.gridSize),
-                        y: Math.floor(Math.random() * this.gridSize),
-                        type: Math.random() < 0.2 ? 'special' : 'normal'
-                    };
-                } while (
-                    this.snake.some(segment => 
-                        segment.x === food.x && segment.y === food.y)
-                );
-                return food;
-            }
-
-            initializeGameMode() {
-                switch(this.gameMode) {
-                    case 'portal':
-                        this.generatePortals();
-                        break;
-                    case 'maze':
-                        this.generateMaze();
-                        break;
-                }
-            }
-
-            generatePortals() {
-                this.portals = [];
-                for (let i = 0; i < 2; i++) {
-                    let portal;
-                    do {
-                        portal = {
-                            x: Math.floor(Math.random() * this.gridSize),
-                            y: Math.floor(Math.random() * this.gridSize),
-                            color: i === 0 ? '#00ffff' : '#ff00ff'
-                        };
-                    } while (
-                        this.snake.some(segment => 
-                            segment.x === portal.x && segment.y === portal.y)
-                    );
-                    this.portals.push(portal);
-                }
-            }
-
-            generateMaze() {
-                this.mazeWalls = [];
-                const wallCount = Math.floor(this.gridSize * this.gridSize * 0.15);
-                
-                for (let i = 0; i < wallCount; i++) {
-                    let wall;
-                    do {
-                        wall = {
-                            x: Math.floor(Math.random() * this.gridSize),
-                            y: Math.floor(Math.random() * this.gridSize)
-                        };
-                    } while (
-                        this.snake.some(segment => 
-                            segment.x === wall.x && segment.y === wall.y) ||
-                        Math.abs(wall.x - this.snake[0].x) < 3 ||
-                        Math.abs(wall.y - this.snake[0].y) < 3
-                    );
-                    this.mazeWalls.push(wall);
-                }
-            }
-
-            update() {
-                if (this.paused || this.gameOver) return;
-
-                // Get new head position
-                let newHead = {
-                    x: this.snake[0].x + this.nextDirection.x,
-                    y: this.snake[0].y + this.nextDirection.y
-                };
-
-                // Handle portal transportation
-                if (this.gameMode === 'portal') {
-                    const portalIndex = this.portals.findIndex(p => 
-                        p.x === newHead.x && p.y === newHead.y);
-                    if (portalIndex !== -1) {
-                        const otherPortal = this.portals[1 - portalIndex];
-                        newHead = {
-                            x: otherPortal.x + this.nextDirection.x,
-                            y: otherPortal.y + this.nextDirection.y
-                        };
-                    }
-                }
-
-                // Check collisions
-                if (this.checkCollision(newHead)) {
-                    if (!this.activePowerUps.has('ghost')) {
-                        this.handleGameOver();
-                        return;
-                    }
-                }
-
-                // Update snake position
-                this.snake.unshift(newHead);
-
-                // Check food collision
-                if (this.checkFoodCollision(newHead)) {
-                    this.handleFoodCollection();
-                } else {
-                    this.snake.pop();
-                }
-
-                // Update direction for next frame
-                this.direction = {...this.nextDirection};
-
-                // Draw game state
-                this.draw();
-
-                // Check for minigame trigger
-                if (this.score > 0 && this.score % 100 === 0) {
-                    this.startMinigame();
-                }
-            }
-
-            checkCollision(position) {
-                // Wall collision
-                if (position.x < 0 || position.x >= this.gridSize || 
-                    position.y < 0 || position.y >= this.gridSize) {
-                    return true;
-                }
-
-                // Self collision
-                if (this.snake.some(segment => 
-                    segment.x === position.x && segment.y === position.y)) {
-                    return true;
-                }
-
-                // Maze wall collision
-                if (this.gameMode === 'maze' && 
-                    this.mazeWalls.some(wall => 
-                        wall.x === position.x && wall.y === position.y)) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            checkFoodCollision(position) {
-                return position.x === this.food.x && position.y === this.food.y;
-            }
-
-            handleFoodCollection() {
-                // Calculate score
-                let points = this.food.type === 'special' ? 20 : 10;
-                if (this.activePowerUps.has('double')) {
-                    points *= 2;
-                }
-                this.score += points;
-                document.getElementById('scoreValue').textContent = this.score;
-
-                // Generate new food
-                this.food = this.generateFood();
-
-                // Update game speed in speed run mode
-                if (this.gameMode === 'speed') {
-                    this.speed = Math.max(50, this.speed - 2);
-                    if (this.gameLoop) {
-                        clearInterval(this.gameLoop);
-                        this.gameLoop = setInterval(() => this.update(), this.speed);
-                    }
-                }
-            }
-
-            startMinigame() {
-                this.paused = true;
-                const minigames = [
-                    this.memoryGame.bind(this),
-                    this.reactionGame.bind(this),
-                    this.mazeGame.bind(this),
-                    this.collectGame.bind(this)
-                ];
-                const selectedMinigame = minigames[Math.floor(Math.random() * minigames.length)];
-                selectedMinigame();
-            }
-
-            memoryGame() {
-                const sequence = Array.from({length: 4}, () => Math.floor(Math.random() * 4));
-                const directions = ['⬆️', '⬇️', '⬅️', '➡️'];
-                let playerSequence = [];
-                
-                const overlay = document.querySelector('.minigame-overlay');
-                const content = document.querySelector('.minigame-content');
-                overlay.style.display = 'flex';
-                
-                const showSequence = (index = 0) => {
-                    if (index < sequence.length) {
-                        content.innerHTML = `
-                            <h2>Remember the Sequence</h2>
-                            <div style="font-size: 48px;">${directions[sequence[index]]}</div>
-                        `;
-                        setTimeout(() => showSequence(index + 1), 1000);
-                    } else {
-                        content.innerHTML = `
-                            <h2>Repeat the Sequence</h2>
-                            <div class="direction-buttons">
-                                ${directions.map((dir, i) => `
-                                    <button onclick="window.handleMinigameInput(${i})" 
-                                        style="font-size: 24px; margin: 5px;">
-                                        ${dir}
-                                    </button>
-                                `).join('')}
-                            </div>
-                        `;
-                    }
-                };
-
-                window.handleMinigameInput = (input) => {
-                    playerSequence.push(input);
-                    if (playerSequence[playerSequence.length - 1] !== 
-                        sequence[playerSequence.length - 1]) {
-                        this.endMinigame(false);
-                    } else if (playerSequence.length === sequence.length) {
-                        this.endMinigame(true);
-                    }
-                };
-
-                showSequence();
-            }
-
-            reactionGame() {
-                const overlay = document.querySelector('.minigame-overlay');
-                const content = document.querySelector('.minigame-content');
-                overlay.style.display = 'flex';
-                
-                content.innerHTML = `
-                    <h2>Click when Green!</h2>
-                    <div id="target" style="
-                        width: 100px;
-                        height: 100px;
-                        background: red;
-                        border-radius: 50%;
-                        margin: 20px auto;
-                        cursor: pointer;
-                    "></div>
-                `;
-
-                const target = document.getElementById('target');
-                let startTime;
-                let clicked = false;
-
-                target.onclick = () => {
-                    if (!clicked) {
-                        clicked = true;
-                        if (!startTime) {
-                            this.endMinigame(false);
-                        } else {
-                            const reactionTime = Date.now() - startTime;
-                            this.endMinigame(reactionTime < 500);
-                        }
-                    }
-                };
-
-                setTimeout(() => {
-                    if (!clicked) {
-                        target.style.background = 'green';
-                        startTime = Date.now();
-                    }
-                }, 1000 + Math.random() * 2000);
-            }
-
-            endMinigame(success) {
-                const overlay = document.querySelector('.minigame-overlay');
-                overlay.style.display = 'none';
-                
-                this.paused = false;
-                if (success) {
-                    this.activatePowerUp('double');
-                }
-            }
-
-            activatePowerUp(type) {
-                if (this.paused || this.gameOver) return;
-
-                const powerUp = document.querySelector(`.power-up[data-power="${type}"]`);
-                if (powerUp.classList.contains('active')) return;
-
-                this.activePowerUps.add(type);
-                powerUp.classList.add('active');
-
-                // Apply power-up effects
-                switch(type) {
-                    case 'speed':
-                        this.speed /= 2;
-                        if (this.gameLoop) {
-                            clearInterval(this.gameLoop);
-                            this.gameLoop = setInterval(() => this.update(), this.speed);
-                        }
-                        break;
-                    case 'size':
-                        for (let i = 0; i < 3; i++) {
-                            this.snake.push({...this.snake[this.snake.length - 1]});
-                        }
-                        break;
-                }
-
-                // Remove power-up after duration
-                setTimeout(() => {
-                    this.activePowerUps.delete(type);
-                    powerUp.classList.remove('active');
-                    
-                    if (type === 'speed') {
-                        this.speed *= 2;
-                        if (this.gameLoop) {
-                            clearInterval(this.gameLoop);
-                            this.gameLoop = setInterval(() => this.update(), this.speed);
-                        }
-                    }
-                }, 10000);
-            }
-
-            draw() {
-                // Clear canvas
-                this.gameCtx.fillStyle = '#000';
-                this.gameCtx.fillRect(0, 0, this.canvasSize, this.canvasSize);
-
-                // Draw maze walls
-                if (this.gameMode === 'maze') {
-                    this.gameCtx.fillStyle = '#666';
-                    this.mazeWalls.forEach(wall => {
-                        this.gameCtx.fillRect(
-                            wall.x * this.cellSize,
-                            wall.y * this.cellSize,
-                            this.cellSize - 1,
-                            this.cellSize - 1
-                        );
-                    });
-                }
-
-                // Draw portals
-                if (this.gameMode === 'portal') {
-                    this.portals.forEach(portal => {
-                        this.gameCtx.fillStyle = portal.color;
-                        this.gameCtx.beginPath();
-                        this.gameCtx.arc(
-                            portal.x * this.cellSize + this.cellSize/2,
-                            portal.y * this.cellSize + this.cellSize/2,
-                            this.cellSize/2,
-                            0,
-                            Math.PI * 2
-                        );
-                        this.gameCtx.fill();
-                    });
-                }
-
-                // Draw snake
-                this.snake.forEach((segment, index) => {
-                    let color;
-                    if (this.gameMode === 'rainbow') {
-                        const hue = (Date.now() / 20 + index * 10) % 360;
-                        color = `hsl(${hue}, 100%, 50%)`;
-                    } else {
-                        color = index === 0 ? '#4ecca3' : '#3db892';
-                    }
-
-                    if (this.activePowerUps.has('ghost')) {
-                        this.gameCtx.globalAlpha = 0.5;
-                    }
-
-                    this.gameCtx.fillStyle = color;
-                    this.gameCtx.fillRect(
-                        segment.x * this.cellSize + 1,
-                        segment.y * this.cellSize + 1,
-                        this.cellSize - 2,
-                        this.cellSize - 2
-                    );
-
-                    this.gameCtx.globalAlpha = 1;
-                });
-
-                // Draw food
-                this.gameCtx.fillStyle = this.food.type === 'special' ? '#ffd700' : '#ff6b6b';
-                this.gameCtx.beginPath();
-                this.gameCtx.arc(
-                    this.food.x * this.cellSize + this.cellSize/2,
-                    this.food.y * this.cellSize + this.cellSize/2,
-                    this.cellSize/2 - 2,
-                    0,
-                    Math.PI * 2
-                );
-                this.gameCtx.fill();
-            }
-
-            start() {
-                this.reset();
-                this.countDown(() => {
-                    this.gameLoop = setInterval(() => this.update(), this.speed);
-                    document.getElementById('startButton').textContent = 'Restart';
-                });
-            }
-
-            countDown(callback) {
-                const overlay = document.querySelector('.minigame-overlay');
-                const content = document.querySelector('.minigame-content');
-                let count = 3;
-
-                const showCount = () => {
-                    content.innerHTML = `<h1>${count}</h1>`;
-                    overlay.style.display = 'flex';
-                    
-                    if (count > 0) {
-                        count--;
-                        setTimeout(showCount, 1000);
-                    } else {
-                        content.innerHTML = '<h1>GO!</h1>';
-                        setTimeout(() => {
-                            overlay.style.display = 'none';
-                            callback();
-                        }, 500);
-                    }
-                };
-
-                showCount();
-            }
-
-            togglePause() {
-                if (this.gameOver) return;
-                
-                this.paused = !this.paused;
-                document.getElementById('pauseButton').textContent = 
-                    this.paused ? 'Resume' : 'Pause';
-
-                if (this.paused) {
-                    clearInterval(this.gameLoop);
-                } else {
-                    this.countDown(() => {
-                        this.gameLoop = setInterval(() => this.update(), this.speed);
-                    });
-                }
-            }
-
-            handleGameOver() {
-                this.gameOver = true;
-                clearInterval(this.gameLoop);
-
-                const overlay = document.querySelector('.minigame-overlay');
-                const content = document.querySelector('.minigame-content');
-                
-                overlay.style.display = 'flex';
-                content.innerHTML = `
-                    <h2>Game Over!</h2>
-                    <p>Score: ${this.score}</p>
-                    <button onclick="game.start()" 
-                        style="padding: 10px 20px; margin-top: 20px;">
-                        Play Again
-                    </button>
-                `;
-            }
-        }
-
-        // Initialize game
-        const game = new SnakeGame();
-    </script>
-</body>
-</html>
+export default MemoryGame;
